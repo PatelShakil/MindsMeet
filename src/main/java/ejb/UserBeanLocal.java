@@ -4,6 +4,7 @@
  */
 package ejb;
 
+import com.techsavvy.mindsmeet.entity.Users;
 import javax.ejb.Local;
 
 /**
@@ -13,4 +14,6 @@ import javax.ejb.Local;
 @Local
 public interface UserBeanLocal {
     
+    public Users doLogin(String email,String password);
+    public Users doSignup(String email,String password,String username);
 }
