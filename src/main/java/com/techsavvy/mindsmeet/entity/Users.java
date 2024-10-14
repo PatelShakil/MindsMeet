@@ -125,7 +125,7 @@ public class Users implements Serializable {
     private Collection<CommunityMembers> communityMembersCollection;
     @OneToMany(mappedBy = "userId")
     private Collection<CommunityReply> communityReplyCollection;
-    @OneToOne(mappedBy = "userId")
+    @OneToOne(mappedBy = "user")
     private UserSettings userSettings;
     @OneToMany(mappedBy = "userId")
     private Collection<FaqAnswers> faqAnswersCollection;
@@ -422,7 +422,7 @@ public class Users implements Serializable {
 
     @Override
     public String toString() {
-        return "com.techsavvy.mindsmeet.entity.Users[ id=" + id + " ]";
+        return "id=" + id + "\nname=" + name +"\nemail=" + email;
     }
     
 }
