@@ -38,36 +38,31 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "FaqMst.findByUpdatedAt", query = "SELECT f FROM FaqMst f WHERE f.updatedAt = :updatedAt")})
 public class FaqMst implements Serializable {
 
+    @Lob
+    @Size(max = 2147483647)
+    @Column(name = "code")
+    private String code;
+    @Column(name = "created_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+    @Lob
+    @Size(max = 2147483647)
+    @Column(name = "description")
+    private String description;
+    @Lob
+    @Size(max = 2147483647)
+    @Column(name = "que")
+    private String que;
+    @Column(name = "updated_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    @Basic(optional = false)
-    @NotNull
-    @Lob
-    @Size(min = 1, max = 65535)
-    @Column(name = "que")
-    private String que;
-    @Lob
-    @Size(max = 65535)
-    @Column(name = "description")
-    private String description;
-    @Lob
-    @Size(max = 65535)
-    @Column(name = "code")
-    private String code;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "created_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "updated_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne
     private Users userId;
@@ -100,29 +95,6 @@ public class FaqMst implements Serializable {
         this.id = id;
     }
 
-    public String getQue() {
-        return que;
-    }
-
-    public void setQue(String que) {
-        this.que = que;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
 
     public Date getCreatedAt() {
         return createdAt;
@@ -196,5 +168,31 @@ public class FaqMst implements Serializable {
     public String toString() {
         return "com.techsavvy.mindsmeet.entity.FaqMst[ id=" + id + " ]";
     }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getQue() {
+        return que;
+    }
+
+    public void setQue(String que) {
+        this.que = que;
+    }
+
+
     
 }

@@ -20,9 +20,12 @@ import com.techsavvy.mindsmeet.entity.UserSettings;
 import com.techsavvy.mindsmeet.entity.Users;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Level;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.validation.ConstraintViolationException;
+import sun.util.logging.resources.logging;
 import utils.Resource;
 
 /**
@@ -75,6 +78,8 @@ public class UserBean implements UserBeanLocal {
     @Override
     public Resource<Users> doSignup(Users user) {
         Resource<Users> res = new Resource(null, "", false);
+        
+        System.out.print(user);
 
         try {
             em.persist(user); // Persist the new user into the database
@@ -90,7 +95,10 @@ public class UserBean implements UserBeanLocal {
                 res.setStatus(false);
                 res.setObj(null);
             }
+        }catch (ConstraintViolationException e) {
+            e.getConstraintViolations().forEach(err -> System.out.println(err.toString()));
         } catch (Exception e) {
+            e.printStackTrace();
             res.setMessage("An error occurred during signup: " + e.getMessage());
             res.setStatus(false);
             res.setObj(null);
@@ -252,7 +260,14 @@ public class UserBean implements UserBeanLocal {
         res.setObj(em.createNamedQuery("Users.findAll")
                 .getResultList());
         
-        return res; 
-    }
+        if(res.getObj() != null || !res.getObj().isEmpty()){
+            res.setStatus(true);
+            return res;
+        }else{
+            res.setMessage("No users exists!!!");
+            return res;
+            
+        }
+            }
 
 }

@@ -7,8 +7,10 @@ com\techsavvy\mindsmeet\entity\Users.class
 com\techsavvy\mindsmeet\resources\JakartaEE8Resource.class
 utils\Resource.class
 com\techsavvy\mindsmeet\entity\NoteComments.class
+api\UserResource.class
 com\techsavvy\mindsmeet\entity\NotesView.class
 com\techsavvy\mindsmeet\entity\PostFeedMst.class
+com\techsavvy\mindsmeet\resources\entities\service\AbstractFacade.class
 com\techsavvy\mindsmeet\entity\CommunityReply.class
 com\techsavvy\mindsmeet\entity\CommunityMst.class
 ejb\UserBeanLocal.class

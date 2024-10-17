@@ -1,5 +1,6 @@
 D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\utils\Resource.java
 D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\com\techsavvy\mindsmeet\entity\NoteReplies.java
+D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\api\UserResource.java
 D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\com\techsavvy\mindsmeet\entity\CommunityMsg.java
 D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\com\techsavvy\mindsmeet\entity\PostLikes.java
 D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\com\techsavvy\mindsmeet\entity\FaqScreenshot.java
@@ -8,6 +9,7 @@ D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\com\techsavvy\mindsmeet\entity\Use
 D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\com\techsavvy\mindsmeet\entity\GroupMst.java
 D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\com\techsavvy\mindsmeet\entity\NoteComments.java
 D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\servlet\TestServlet.java
+D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\com\techsavvy\mindsmeet\resources\entities\service\AbstractFacade.java
 D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\com\techsavvy\mindsmeet\entity\CommunityMembers.java
 D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\com\techsavvy\mindsmeet\entity\PostFeedMst.java
 D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\ejb\UserBeanLocal.java

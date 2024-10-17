@@ -34,22 +34,19 @@ import javax.validation.constraints.NotNull;
     @NamedQuery(name = "CommunityMembers.findByUpdatedAt", query = "SELECT c FROM CommunityMembers c WHERE c.updatedAt = :updatedAt")})
 public class CommunityMembers implements Serializable {
 
+    @Column(name = "created_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+    @Column(name = "updated_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "created_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "updated_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne
     private Users userId;
@@ -134,5 +131,5 @@ public class CommunityMembers implements Serializable {
     public String toString() {
         return "com.techsavvy.mindsmeet.entity.CommunityMembers[ id=" + id + " ]";
     }
-    
+
 }

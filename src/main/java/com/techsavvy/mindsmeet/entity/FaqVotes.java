@@ -36,26 +36,23 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "FaqVotes.findByUpdatedAt", query = "SELECT f FROM FaqVotes f WHERE f.updatedAt = :updatedAt")})
 public class FaqVotes implements Serializable {
 
+    @Lob
+    @Size(max = 2147483647)
+    @Column(name = "code")
+    private String code;
+    @Column(name = "created_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+    @Column(name = "updated_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    @Lob
-    @Size(max = 65535)
-    @Column(name = "code")
-    private String code;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "created_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "updated_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
     @JoinColumn(name = "faq_id", referencedColumnName = "id")
     @ManyToOne
     private FaqMst faqId;
@@ -84,13 +81,6 @@ public class FaqVotes implements Serializable {
         this.id = id;
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
 
     public Date getCreatedAt() {
         return createdAt;
@@ -148,5 +138,15 @@ public class FaqVotes implements Serializable {
     public String toString() {
         return "com.techsavvy.mindsmeet.entity.FaqVotes[ id=" + id + " ]";
     }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+   
     
 }
