@@ -85,6 +85,10 @@ public class UserBean implements UserBeanLocal {
             em.persist(user); // Persist the new user into the database
             em.flush();
             Users u = em.find(Users.class, user.getId()); // Retrieve the persisted user using its ID
+            UserSettings us = new UserSettings();
+            us.setUser(u);
+            us.setIsPrivate(false);
+            em.persist(us);
 
             if (u != null) {
                 res.setMessage("Signup Successful!!!");
@@ -110,7 +114,7 @@ public class UserBean implements UserBeanLocal {
 
     @Override
     public void updateSetting(UserSettings us) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        
     }
 
     @Override
