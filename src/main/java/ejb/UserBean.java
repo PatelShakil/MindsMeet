@@ -36,7 +36,7 @@ import utils.Resource;
 @Stateless
 public class UserBean implements UserBeanLocal {
 
-    @PersistenceContext(unitName = "my_mindsmeet_pu")
+    @PersistenceContext(unitName = "my_mindsmeet")
     EntityManager em;
 
     @Override
@@ -114,12 +114,14 @@ public class UserBean implements UserBeanLocal {
 
     @Override
     public void updateSetting(UserSettings us) {
-        
+        em.merge(us);
+        em.flush();
     }
 
     @Override
     public void updateUser(Users user) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        em.merge(user);
+        em.flush();
     }
 
     @Override
@@ -273,5 +275,21 @@ public class UserBean implements UserBeanLocal {
             
         }
             }
+
+    @Override
+    public Resource<Users> getUser(Integer id) {
+        Users user = em.find(Users.class, id);
+        Resource res = new Resource(null,"",false);
+        if(user != null){
+            res.setMessage("User found");
+            res.setStatus(true);
+            res.setObj(user);
+        }else{
+            res.setMessage("User Not Found");
+            res.setStatus(false);
+            res.setObj(null);
+        }
+        return res;
+    }
 
 }

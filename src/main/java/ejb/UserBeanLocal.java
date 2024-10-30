@@ -40,6 +40,8 @@ public interface UserBeanLocal {
     
     public Resource<Collection<Users>> getAllUsers();
     
+    public Resource<Users> getUser(Integer id);
+    
     //notes
     public Resource<Boolean> uploadNote(Notes note);
 

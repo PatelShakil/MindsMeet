@@ -244,6 +244,7 @@
         public void setUsername(String username) {
             this.username = username;
         }
+        
 
         @JsonbTransient
         public Collection<GroupUsers> getGroupUsersCollection() {
@@ -413,7 +414,8 @@
         public String toString() {
             return "User {" + 
                "id=" + id + 
-               ", name='" + name + '\'' + 
+               ", name='" + name + '\'' +
+                    ", username='" + username  + '\'' +
                ", email='" + email + '\'' + 
                ", phone='" + phone + '\'' + 
                ", isActive=" + isActive + 
