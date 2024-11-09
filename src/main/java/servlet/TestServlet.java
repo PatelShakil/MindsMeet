@@ -43,7 +43,6 @@ public class TestServlet extends HttpServlet {
     try (PrintWriter out = response.getWriter()) {
         Users user = new Users();
         user.setId(1);
-        user.setToken("abcd");
         user.setEmail("abc@gmail.com");
         user.setPassword("12345678");
         user.setName("ABC");

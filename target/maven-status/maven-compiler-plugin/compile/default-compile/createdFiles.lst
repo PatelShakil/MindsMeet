@@ -1,7 +1,12 @@
+jwt\TokenProvider.class
 com\techsavvy\mindsmeet\entity\Notes.class
 com\techsavvy\mindsmeet\entity\UserSettings.class
 com\techsavvy\mindsmeet\entity\CommunityMsg.class
+auth\KeepRecord.class
+jwt\JWTCredential.class
+auth\Project.class
 com\techsavvy\mindsmeet\entity\GroupMst.class
+jwt\Constants.class
 com\techsavvy\mindsmeet\JakartaRestConfiguration.class
 com\techsavvy\mindsmeet\entity\Users.class
 com\techsavvy\mindsmeet\resources\JakartaEE8Resource.class

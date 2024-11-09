@@ -34,20 +34,22 @@ public interface UserBeanLocal {
 
     public Resource<Users> doSignup(Users user);
 
-    public void updateSetting(UserSettings us);
+    public Resource<Boolean> updateSetting(UserSettings us);
     
-    public void updateUser(Users user);
+    public Resource<Boolean> updateUser(Users user);
     
     public Resource<Collection<Users>> getAllUsers();
     
     public Resource<Users> getUser(Integer id);
+    
+    public Resource<UserSettings> getSetting(Integer id);
     
     //notes
     public Resource<Boolean> uploadNote(Notes note);
 
     public Resource<Collection<Notes>> viewNotes();
 
-    public void doCommentOnNotes(NoteComments noteComment);
+    public Resource<Boolean> doCommentOnNotes(String cmtText,Integer noteId,Integer userId);
 
     public void replyNotesComments(NoteReplies nr);
     

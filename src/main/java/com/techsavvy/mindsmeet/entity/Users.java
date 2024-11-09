@@ -34,7 +34,6 @@
     @NamedQueries({
         @NamedQuery(name = "Users.findAll", query = "SELECT u FROM Users u"),
         @NamedQuery(name = "Users.findById", query = "SELECT u FROM Users u WHERE u.id = :id"),
-        @NamedQuery(name = "Users.findByToken", query = "SELECT u FROM Users u WHERE u.token = :token"),
         @NamedQuery(name = "Users.findByEmail", query = "SELECT u FROM Users u WHERE u.email = :email"),
         @NamedQuery(name = "Users.findByPassword", query = "SELECT u FROM Users u WHERE u.password = :password"),
         @NamedQuery(name = "Users.findByPhone", query = "SELECT u FROM Users u WHERE u.phone = :phone"),
@@ -53,12 +52,6 @@
         @Basic(optional = false)
         @Column(name = "id")
         private Integer id;
-        @Basic(optional = false)
-        @NotNull
-        @Size(min = 1, max = 255)
-        @Column(name = "token")
-        private String token;
-        // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
         @Basic(optional = false)
         @NotNull
         @Size(min = 1, max = 255)
@@ -146,14 +139,6 @@
 
         public void setId(Integer id) {
             this.id = id;
-        }
-
-        public String getToken() {
-            return token;
-        }
-
-        public void setToken(String token) {
-            this.token = token;
         }
 
         public String getEmail() {

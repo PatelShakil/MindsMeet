@@ -58,6 +58,8 @@ public class GroupUsers implements Serializable {
     private GroupMst groupId;
 
     public GroupUsers() {
+        this.createdAt = new Date();
+        this.updatedAt = new Date();
     }
 
     public GroupUsers(Integer id) {

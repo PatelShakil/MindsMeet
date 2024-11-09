@@ -13,6 +13,11 @@ public class Resource<T> {
     private String message;
     private Boolean status;
 
+    public Resource(){
+        this.obj = null;
+        this.message = "";
+        this.status = false;
+    }
     // Constructor to initialize the values
     public Resource(T obj, String message, Boolean status) {
         this.obj = obj;
