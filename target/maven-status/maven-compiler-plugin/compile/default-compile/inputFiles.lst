@@ -1,5 +1,6 @@
 D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\utils\Resource.java
 D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\com\techsavvy\mindsmeet\entity\NoteReplies.java
+D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\utils\Utils.java
 D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\api\UserResource.java
 D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\com\techsavvy\mindsmeet\entity\CommunityMsg.java
 D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\com\techsavvy\mindsmeet\entity\PostLikes.java
@@ -8,6 +9,7 @@ D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\com\techsavvy\mindsmeet\entity\Faq
 D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\jwt\JWTCredential.java
 D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\com\techsavvy\mindsmeet\entity\Notes.java
 D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\com\techsavvy\mindsmeet\entity\UserSettings.java
+D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\api\UserApi.java
 D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\com\techsavvy\mindsmeet\entity\GroupMst.java
 D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\com\techsavvy\mindsmeet\entity\NoteComments.java
 D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\servlet\TestServlet.java
@@ -28,6 +30,7 @@ D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\com\techsavvy\mindsmeet\JakartaRes
 D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\ejb\UserBean.java
 D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\jwt\Constants.java
 D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\com\techsavvy\mindsmeet\entity\CommunityMst.java
+D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\cdi\AuthBean.java
 D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\com\techsavvy\mindsmeet\resources\JakartaEE8Resource.java
 D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\com\techsavvy\mindsmeet\entity\Users.java
 D:\ICT\JAVA\MindsMeet\MindsMeet\src\main\java\com\techsavvy\mindsmeet\entity\MsgMst.java

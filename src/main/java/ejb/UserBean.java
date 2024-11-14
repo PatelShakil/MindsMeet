@@ -31,6 +31,7 @@ import javax.persistence.PersistenceContext;
 import javax.security.enterprise.credential.Password;
 import javax.security.enterprise.identitystore.Pbkdf2PasswordHash;
 import javax.validation.ConstraintViolationException;
+import javax.ws.rs.core.Response;
 import sun.util.logging.resources.logging;
 import utils.Resource;
 
@@ -44,7 +45,7 @@ public class UserBean implements UserBeanLocal {
 
     @PersistenceContext(unitName = "my_mindsmeet_pu")
     EntityManager em;
-    
+
     @Inject
     private Pbkdf2PasswordHash passwordHasher;
 
@@ -85,13 +86,13 @@ public class UserBean implements UserBeanLocal {
     }
 
     @Override
-    public Resource<Users> doSignup(Users user) {
+    public Response doSignup(Users user) {
         Resource<Users> res = new Resource(null, "", false);
 
         System.out.print(user);
 
         try {
-            
+
             String hashedPassword = passwordHasher.generate(user.getPassword().toCharArray());
             user.setPassword(hashedPassword);
             em.persist(user); // Persist the new user into the database
@@ -102,11 +103,10 @@ public class UserBean implements UserBeanLocal {
             us.setIsPrivate(false);
             em.persist(us);
             GroupUsers gu = new GroupUsers();
-            GroupMst gm = em.find(GroupMst.class,1);
+            GroupMst gm = em.find(GroupMst.class, 1);
             gu.setGroupId(gm);
             gu.setUserId(user);
             em.persist(gu);
-            
 
             if (u != null) {
                 res.setMessage("Signup Successful!!!");
@@ -126,13 +126,13 @@ public class UserBean implements UserBeanLocal {
             res.setObj(null);
         }
 
-        return res;
+        return Response.ok(res).build();
     }
 
     @Override
     public Resource<Boolean> updateSetting(UserSettings us) {
         Resource<Boolean> res = new Resource(null, "", false);
-        
+
         try {
             em.merge(us);
             em.flush();
@@ -145,12 +145,12 @@ public class UserBean implements UserBeanLocal {
         }
         return res;
     }
-    
+
     @Override
-    public Resource<UserSettings> getSetting(Integer id){
+    public Resource<UserSettings> getSetting(Integer id) {
         Resource<UserSettings> res = new Resource();
         System.out.println(id.toString());
-        res.setObj(em.find(UserSettings.class,id));
+        res.setObj(em.find(UserSettings.class, id));
         return res;
     }
 
@@ -242,7 +242,16 @@ public class UserBean implements UserBeanLocal {
 
     @Override
     public Resource<Collection<FaqMst>> viewFaqs() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        Resource<Collection<FaqMst>> res = new Resource(null, "", false);
+        try {
+            res.setStatus(Boolean.TRUE);
+            res.setMessage("All Faqs");
+            res.setObj(em.createNamedQuery("FaqMst.findAll").getResultList());
+        } catch (Exception e) {
+            res.setStatus(false);
+            res.setMessage(e.getMessage());
+        }
+        return res;
     }
 
     @Override
@@ -374,6 +383,44 @@ public class UserBean implements UserBeanLocal {
             res.setMessage("User Not Found");
             res.setStatus(false);
             res.setObj(null);
+        }
+        return res;
+    }
+
+    @Override
+    public Resource<Notes> getNoteById(Integer id) {
+        Resource<Notes> res = new Resource();
+        try {
+            Notes note = em.find(Notes.class, id);
+            if (note != null) {
+                res.setObj(note);
+                res.setStatus(Boolean.TRUE);
+            } else {
+                res.setStatus(false);
+                res.setMessage("No Note Found");
+            }
+        } catch (Exception e) {
+            res.setMessage(e.getMessage());
+            res.setStatus(false);
+        }
+        return res;
+    }
+
+    @Override
+    public Resource<FaqMst> getFaqById(Integer id) {
+        Resource<FaqMst> res = new Resource();
+        try {
+            FaqMst faq = em.find(FaqMst.class, id);
+            if (faq != null) {
+                res.setObj(faq);
+                res.setStatus(Boolean.TRUE);
+            } else {
+                res.setStatus(false);
+                res.setMessage("No Faq Found");
+            }
+        } catch (Exception e) {
+            res.setMessage(e.getMessage());
+            res.setStatus(false);
         }
         return res;
     }

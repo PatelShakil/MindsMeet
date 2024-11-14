@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Register | MindsMeet</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </h:head>
+    <h:body>
+        <h:form class="flex flex-col lg:m-20 m-10 gap-y-5">
+            <!--<p:messages closable="true" />-->
+            <p:messages closable="true" showDetail="true" showSummary="true"  />
+
+            <div class="flex gap-x-5 items-center">
+                <p>Your Profile Image</p>
+            <p:fileUpload 
+                          listener="#{authBean.handleFileUpload}"
+                          mode="simple"
+                          dragDropSupport="true"
+                          auto="true"
+                          label="Upload Profile"
+                          update="imagePanel"
+                          class=""
+                          oncomplete="PF('imagePanel').show();"
+                          uploadButtonTitle="Choose Profile"
+                          />
+            </div>
+            <h:panelGroup id="imagePanel" >
+                <h:outputText value="Uploaded Profile"/>
+                <p:graphicImage id="imagePanel1" value="#{authBean.profilePath}" alt="#{authBean.profilePath}"
+                                width="300px"
+                                /> 
+
+            </h:panelGroup>
+            <p:inputText type="name" value="#{authBean.name}" placeholder="Enter your Name" required="true" /><!-- comment -->
+            <p:inputText type="name" value="#{authBean.username}" placeholder="Enter your Username" required="true" /><!-- comment -->
+            <p:inputText type="tel" value="#{authBean.phone}" placeholder="Enter your Phone" required="true" label="Phone"/>
+            <p:inputText type="email" placeholder="Enter Your Email" required='true' value='#{authBean.email}' />
+            <p:inputText type="password" placeholder="Enter Your Password" required='true' value='#{authBean.password}'/>
+            <h:commandButton type="submit" value="Signup" class=" p-2 py-2 bg-green-500 rounded" action='#{authBean.onRegister}' />       
+        </h:form>
+        <p class="text-center">Already have an Account ? <p:link href="login.jsf">Login</p:link></p>
+
+        
+    </h:body>
+</html>

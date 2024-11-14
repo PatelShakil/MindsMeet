@@ -20,6 +20,7 @@ import com.techsavvy.mindsmeet.entity.UserSettings;
 import com.techsavvy.mindsmeet.entity.Users;
 import java.util.Collection;
 import javax.ejb.Local;
+import javax.ws.rs.core.Response;
 import utils.Resource;
 
 /**
@@ -32,7 +33,7 @@ public interface UserBeanLocal {
     //user
     public Resource<Users> doLogin(String email, String password);
 
-    public Resource<Users> doSignup(Users user);
+    public Response doSignup(Users user);
 
     public Resource<Boolean> updateSetting(UserSettings us);
     
@@ -57,6 +58,8 @@ public interface UserBeanLocal {
     
     public void deleteNote(Integer nId);
     
+    public Resource<Notes> getNoteById(Integer id);
+    
     //faqs
     public Resource<Collection<FaqMst>> viewFaqs();
 
@@ -67,6 +70,8 @@ public interface UserBeanLocal {
     public void editFaq(FaqMst fm);
     
     public void deleteFaq(Integer fId);
+    
+    public Resource<FaqMst> getFaqById(Integer id);
 
     //posts
     public Resource<Collection<PostFeedMst>> viewPosts();

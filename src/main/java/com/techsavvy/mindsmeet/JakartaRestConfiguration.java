@@ -11,14 +11,14 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
  */
 @ApplicationPath("api")
 public class JakartaRestConfiguration extends Application {
-    @Override
-    public HashSet<Class<?>> getClasses() {
-        HashSet<Class<?>> resources = new HashSet<>();
-        // Register MultiPartFeature to handle multipart/form-data
-        resources.add(MultiPartFeature.class);
-
-        // Add other resource classes as needed
-        // resources.add(YourResourceClass.class);
-        return resources;
-    }
+//    @Override
+//    public HashSet<Class<?>> getClasses() {
+//        HashSet<Class<?>> resources = new HashSet<>();
+//        // Register MultiPartFeature to handle multipart/form-data
+//        resources.add(MultiPartFeature.class);
+//
+//        // Add other resource classes as needed
+//        // resources.add(YourResourceClass.class);
+//        return resources;
+//    }
 }

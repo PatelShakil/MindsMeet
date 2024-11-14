@@ -248,6 +248,7 @@
             this.faqMstCollection = faqMstCollection;
         }
 
+        @JsonbTransient
         public Collection<Notes> getNotesCollection() {
             return notesCollection;
         }

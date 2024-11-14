@@ -14,8 +14,10 @@ utils\Resource.class
 com\techsavvy\mindsmeet\entity\NoteComments.class
 api\UserResource.class
 com\techsavvy\mindsmeet\entity\NotesView.class
+api\UserApi.class
 com\techsavvy\mindsmeet\entity\PostFeedMst.class
 com\techsavvy\mindsmeet\resources\entities\service\AbstractFacade.class
+utils\Utils.class
 com\techsavvy\mindsmeet\entity\CommunityReply.class
 com\techsavvy\mindsmeet\entity\CommunityMst.class
 ejb\UserBeanLocal.class
@@ -23,6 +25,7 @@ servlet\TestServlet.class
 ejb\UserBean.class
 com\techsavvy\mindsmeet\entity\CommunityMembers.class
 com\techsavvy\mindsmeet\entity\FaqAnswers.class
+cdi\AuthBean.class
 com\techsavvy\mindsmeet\entity\FaqMst.class
 com\techsavvy\mindsmeet\entity\GroupUsers.class
 com\techsavvy\mindsmeet\entity\PostComments.class

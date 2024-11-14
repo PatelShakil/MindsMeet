@@ -7,6 +7,7 @@ package com.techsavvy.mindsmeet.entity;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -74,17 +75,8 @@ public class FaqMst implements Serializable {
     private Collection<FaqAnswers> faqAnswersCollection;
 
     public FaqMst() {
-    }
-
-    public FaqMst(Integer id) {
-        this.id = id;
-    }
-
-    public FaqMst(Integer id, String que, Date createdAt, Date updatedAt) {
-        this.id = id;
-        this.que = que;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.createdAt = createdAt != null ? createdAt : new Date();
+        this.updatedAt = updatedAt != null ? updatedAt : new Date();
     }
 
     public Integer getId() {
@@ -112,6 +104,7 @@ public class FaqMst implements Serializable {
         this.updatedAt = updatedAt;
     }
 
+    @JsonbTransient
     public Users getUserId() {
         return userId;
     }

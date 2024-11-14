@@ -4,11 +4,14 @@
  */
 package utils;
 
+import java.io.Serializable;
+
 /**
  *
  * @author M.SHAKIL PATEL
  */
-public class Resource<T> {
+public class Resource<T> implements Serializable {
+    
     private T obj;            // Corrected to use the generic type T
     private String message;
     private Boolean status;

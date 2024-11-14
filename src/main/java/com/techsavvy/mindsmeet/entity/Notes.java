@@ -7,6 +7,7 @@ package com.techsavvy.mindsmeet.entity;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -93,18 +94,10 @@ public class Notes implements Serializable {
     @OneToMany(mappedBy = "notesId")
     private Collection<NotesText> notesTextCollection;
 
+
     public Notes() {
-    }
-
-    public Notes(Integer id) {
-        this.id = id;
-    }
-
-    public Notes(Integer id, String title, Date createdAt, Date updatedAt) {
-        this.id = id;
-        this.title = title;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.createdAt = createdAt != null ? createdAt : new Date();
+        this.updatedAt = updatedAt != null ? updatedAt : new Date();
     }
 
     public Integer getId() {

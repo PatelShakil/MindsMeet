@@ -4,6 +4,7 @@
  */
 package api;
 
+import com.techsavvy.mindsmeet.entity.FaqMst;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import com.techsavvy.mindsmeet.entity.Notes;
 import com.techsavvy.mindsmeet.entity.UserSettings;
@@ -36,6 +37,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import jwt.TokenProvider;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import utils.Resource;
@@ -76,7 +78,7 @@ public class UserResource {
     @Path("user/login")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Resource<String> doLogin(Users user){
+    public Response doLogin(Users user){
         Resource<String> res = new Resource<>(null, "", false);
         Credential credential = new UsernamePasswordCredential(user.getEmail(), new Password(user.getPassword()));
         result = handler.validate(credential);
@@ -87,17 +89,19 @@ public class UserResource {
             res.setMessage("Login successful");
             res.setStatus(true);
         } else {
-            res.setMessage("Email or Password Wrong!!!");
+            res.setMessage("Email or Password Wrong!!!" );
         }
-        return res;
+        return Response.ok(res).build();
     }
     
     @POST
     @Path("user/signup")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Resource<Users> doSignup(Users user){
+    public Response doSignup(Users user){
         System.out.print(user);
+        user.setIsActive(Boolean.TRUE);
+        user.setIsBlocked(false);
         return ubl.doSignup(user);
     }
     
@@ -138,31 +142,53 @@ public class UserResource {
     }
     
     @POST
-    @Path("note/upload")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Path("note/upload/{user_id}")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Resource<Boolean> uploadNote(
-            @FormDataParam("file") InputStream uploadedInputStream,
-            @FormDataParam("file") FormDataContentDisposition fileDetail,
-            @FormDataParam("title") String title,
-            @FormDataParam("description") String description) {
-
-        // Define the public directory path
-        String uploadDir = "D:ICT/JAVA/MindsMeet/uploads";
-        String filePath = uploadDir + File.separator + fileDetail.getFileName();
-
-        // Save the file
-        saveFile(uploadedInputStream, filePath);
-
-        // Create and persist the Notes object
-        Notes note = new Notes();
-        note.setTitle(title);
-        note.setDescription(description);
-        note.setFile(filePath); // Save the file path or URL
-
-        Resource<Boolean> res = new Resource<>(true, "Note uploaded successfully", true);
-        return res;
+    public Resource<Boolean> uploadNote(Notes note,@PathParam("user_id") Integer userId){
+        note.setFile("C:/Dummy/path");
+        note.setIsCommentable(Boolean.TRUE);
+        note.setIsTranslatable(Boolean.TRUE);
+        note.setIsVerified(false);
+        try{
+        Users user = ubl.getUser(userId).getObj();
+        if(user != null){
+            note.setUserId(user);
+        }
+            }catch(Exception e){
+                return new Resource(false,"User Not Exist",false);
+            }
+        return ubl.uploadNote(note);
     }
+    
+//    @POST
+//    @Path("note/upload")
+//    @Consumes(MediaType.MULTIPART_FORM_DATA)
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public Resource<Boolean> uploadNote(
+//            @FormDataParam("file") InputStream uploadedInputStream,
+//            @FormDataParam("file") FormDataContentDisposition fileDetail,
+//            @FormDataParam("title") String title,
+//            @FormDataParam("description") String description) {
+//
+//        // Define the public directory path
+//        String uploadDir = "D:ICT/JAVA/MindsMeet/uploads";
+//        String filePath = uploadDir + File.separator + fileDetail.getFileName();
+//
+//        // Save the file
+//        saveFile(uploadedInputStream, filePath);
+//
+//        // Create and persist the Notes object
+//        Notes note = new Notes();
+//        note.setTitle(title);
+//        note.setDescription(description);
+//        note.setFile(filePath); // Save the file path or URL
+//        return ubl.uploadNote(note);
+//    }
+//    
+    
+    
+    
     
     // Method to handle the file upload
     public void saveFile(InputStream uploadedInputStream, String filePath) {
@@ -174,5 +200,36 @@ public class UserResource {
             // Handle the exception properly
         }
     }
+    
+    @GET
+    @Path("note/get-all")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Resource<Collection<Notes>> getAllNotes(){
+        return ubl.viewNotes();
+    }
+    
+    @GET
+    @Path("note/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Resource<Notes> getNotesById(@PathParam("id") Integer id){
+        return ubl.getNoteById(id);
+    }
+    
+    @GET
+    @Path("faq/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Resource<FaqMst> getFaqById(@PathParam("id") Integer id){
+        return ubl.getFaqById(id);
+    }
+    
+    @GET
+    @Path("faq/get-all")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Resource<Collection<FaqMst>> getAllFaqs(){
+        return ubl.viewFaqs();
+    }
+    
+    
+    
 
 }
