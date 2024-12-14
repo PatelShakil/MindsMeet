@@ -7,6 +7,7 @@ package com.techsavvy.mindsmeet.entity;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -61,16 +62,10 @@ public class NoteComments implements Serializable {
     @ManyToOne
     private Users userId;
 
+    
+
     public NoteComments() {
-    }
-
-    public NoteComments(Integer id) {
-        this.id = id;
-    }
-
-    public NoteComments(Integer id, Date createdAt) {
-        this.id = id;
-        this.createdAt = createdAt;
+        this.createdAt = createdAt == null ? new Date() : createdAt;
     }
 
     public Integer getId() {
@@ -105,6 +100,7 @@ public class NoteComments implements Serializable {
         this.noteRepliesCollection = noteRepliesCollection;
     }
 
+    @JsonbTransient
     public Notes getNoteId() {
         return noteId;
     }

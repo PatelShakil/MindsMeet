@@ -5,7 +5,9 @@
 package com.techsavvy.mindsmeet.entity;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,6 +19,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -65,19 +68,39 @@ public class FaqAnswers implements Serializable {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne
     private Users userId;
-
+    @OneToMany(mappedBy = "ansId")
+    private Collection<FaqVotes> votes;
+    @Column(name="code")
+    private String code;
+    
+    
     public FaqAnswers() {
+        this.createdAt = createdAt == null ? new Date() : createdAt;
+        this.updatedAt = updatedAt == null ? new Date() : updatedAt;
     }
 
-    public FaqAnswers(Integer id) {
-        this.id = id;
+    
+    
+    public Collection<FaqVotes> getVotes() {
+        return votes;
     }
 
-    public FaqAnswers(Integer id, Date createdAt, Date updatedAt) {
-        this.id = id;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+    public void setVotes(Collection<FaqVotes> votes) {
+        this.votes = votes;
     }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+  
+    
+    
+    
 
     public Integer getId() {
         return id;
@@ -118,7 +141,7 @@ public class FaqAnswers implements Serializable {
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
-
+    @JsonbTransient
     public FaqMst getFaqId() {
         return faqId;
     }

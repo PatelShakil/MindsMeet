@@ -142,8 +142,11 @@ public class TokenProvider implements Serializable {
 
     public boolean validateToken(String authToken) {
         try {
-            System.out.println("TokenProvider - TokenProvider - validate token");
+            System.out.println("TokenProvider - TokenProvider - validate token " + authToken);
+            JWTCredential cred = getCredential(authToken);
+            System.out.print(cred);
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(authToken);
+            
           //Jwts.parser().setSigningKey(mypublicKey).parseClaimsJws(authToken);
             return true;
         } catch (SignatureException e) {

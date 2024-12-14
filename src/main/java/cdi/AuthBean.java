@@ -5,20 +5,32 @@
 package cdi;
 
 import api.UserApi;
-import com.fasterxml.jackson.core.type.TypeReference;
+import auth.KeepRecord;
 import com.techsavvy.mindsmeet.entity.Users;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.Set;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.view.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.security.enterprise.AuthenticationStatus;
+import static javax.security.enterprise.AuthenticationStatus.SEND_CONTINUE;
+import static javax.security.enterprise.AuthenticationStatus.SUCCESS;
+import javax.security.enterprise.SecurityContext;
+import static javax.security.enterprise.authentication.mechanism.http.AuthenticationParameters.withParams;
+import javax.security.enterprise.credential.Credential;
+import javax.security.enterprise.credential.Password;
+import javax.security.enterprise.credential.UsernamePasswordCredential;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.file.UploadedFile;
@@ -30,11 +42,18 @@ import utils.Utils;
  * @author M.SHAKIL PATEL
  */
 @Named(value = "authBean")
-@ViewScoped
-public class AuthBean implements Serializable{
+@RequestScoped
+public class AuthBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    
+
+    //security
+    @Inject
+    SecurityContext ctx;
+    private AuthenticationStatus status;
+    private Set<String> roles;
+    private String errorstatus;
+
     private String email;
     private String password;
     private String uploadedFilePath;
@@ -43,9 +62,43 @@ public class AuthBean implements Serializable{
     private String phone;
     private String name;
     private String username;
-    
+    private String isrememberme;
+
     private UserApi api = new UserApi();
+
+    public String getIsrememberme() {
+        return isrememberme;
+    }
+
+    public void setIsrememberme(String isrememberme) {
+        this.isrememberme = isrememberme;
+    }
     
+    
+
+    public AuthenticationStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(AuthenticationStatus status) {
+        this.status = status;
+    }
+
+    public Set<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
+    }
+
+    public String getErrorstatus() {
+        return errorstatus;
+    }
+
+    public void setErrorstatus(String errorstatus) {
+        this.errorstatus = errorstatus;
+    }
 
     public String getPhone() {
         return phone;
@@ -70,13 +123,10 @@ public class AuthBean implements Serializable{
     public void setUsername(String username) {
         this.username = username;
     }
-    
-    
 
     public String getProfilePath() {
         return profilePath;
     }
-    
 
     public String getUploadedFilePath() {
         return uploadedFilePath;
@@ -95,7 +145,7 @@ public class AuthBean implements Serializable{
             String resourcesFolderPath = Utils.IMAGES_PATH;
             System.out.println("Resource path: " + resourcesFolderPath);
 
-            String sanitizedFileName = Utils.getFormattedDate("ddMMMyyyyhhmmssa") + "_" + uploadedFile.getFileName().replaceAll("[<>:\"/\\\\|?*]", "_")  ;
+            String sanitizedFileName = Utils.getFormattedDate("ddMMMyyyyhhmmssa") + "_" + uploadedFile.getFileName().replaceAll(" ","_").replaceAll("[<>:\"/\\\\|?*]", "_");
             File targetFile = new File(resourcesFolderPath, sanitizedFileName);
 
             if (!targetFile.exists()) {
@@ -120,7 +170,6 @@ public class AuthBean implements Serializable{
                     new FacesMessage(FacesMessage.SEVERITY_INFO, "File uploaded successfully", null));
             System.out.println(profilePath);
             System.out.println(uploadedFilePath);
-//            System.out.print(getTextFromPdf(targetFile.getAbsolutePath()));
 
         } catch (IOException e) {
             FacesContext.getCurrentInstance().addMessage(null,
@@ -152,8 +201,8 @@ public class AuthBean implements Serializable{
     public void setPassword(String password) {
         this.password = password;
     }
-    
-    public String onRegister(){
+
+    public String onRegister() {
         Users user = new Users();
         user.setEmail(email);
         user.setPassword(password);
@@ -162,11 +211,11 @@ public class AuthBean implements Serializable{
         user.setPhone(phone);
         System.out.println(this.uploadedFilePath);
         user.setProfile(getUploadedFilePath());
-        
+
         try {
             // Perform the login call
             Response response = api.doSignup(user, Response.class);
-            Resource<Users> res = response.readEntity(Resource.class);
+            Resource<Users> res = response.readEntity(new GenericType<Resource<Users>>(){});
             api.close();
 
             // Simulate checking the response (update this with your actual response check logic)
@@ -186,48 +235,69 @@ public class AuthBean implements Serializable{
             }
         } catch (Exception e) {
             api.close();
-            e.printStackTrace();    
+            e.printStackTrace();
             // Add an error message for exceptions
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "An unexpected error occurred: " + e.getMessage()));
-                return "/auth/register.jsf";        
+            return "/auth/register.jsf";
         }
     }
-        
+
 //    }
-    
-    public void onLogin() {
-        System.out.println("Login Clicked");
+    public String onLogin() {
         Users user = new Users();
         user.setEmail(email);
         user.setPassword(password);
 
         try {
-            // Perform the login call
-            Response res = api.doLogin(user, Response.class);
 
-            // Simulate checking the response (update this with your actual response check logic)
-            if (res != null && res.hasEntity()) {
-                Resource<Users> us = res.readEntity(Resource.class);
-                System.out.print(us);
-                // Add a success message
+            Credential credential = new UsernamePasswordCredential(email, new Password(password));
+            HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+            HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            status = ctx.authenticate(request, response, withParams().credential(credential));
+
+          
+            if (status == AuthenticationStatus.SUCCESS) {
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_INFO, "Login Successful", "Welcome back!"));
+                System.out.print(roles);
+                System.out.println("User : " + ctx.getCallerPrincipal().getName());
+
+                if (roles.contains("Admin")) {
+                    return "/admin";
+                } else if (roles.contains("User")) {
+                    System.out.println("cdi.AuthBean.onLogin()");
+                    return "/user/index.jsf";
+                }else{
+                    return "/auth/login.jsf";
+                }
+
             } else {
-//                System.out.println(res.getMessage());
-                // Add an error message for failed login
                 FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Login Failed", res.getEntity().toString()));
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Login Failed", status.name()));
+                return "/auth/login.jsf";
             }
-            api.close();
         } catch (Exception e) {
             api.close();
-            e.printStackTrace();    
+            e.printStackTrace();
             // Add an error message for exceptions
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "An unexpected error occurred: " + e.getMessage()));
-//        
         }
+        return "/auth/login.jsf";
+    }
+    
+    public String logout(){
+        try {
+            HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+            request.logout();
+            KeepRecord.reset();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return "/auth/login.jsf";
     }
 
     public void setCookie(String name, String value, int maxAgeInDays) {
@@ -246,5 +316,5 @@ public class AuthBean implements Serializable{
 
         // Add the cookie to the response
         response.addCookie(cookie);
-    }    
+    }
 }

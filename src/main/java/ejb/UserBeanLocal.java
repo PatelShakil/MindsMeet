@@ -35,46 +35,37 @@ public interface UserBeanLocal {
 
     public Response doSignup(Users user);
 
-    public Resource<Boolean> updateSetting(UserSettings us);
+    public Response updateSetting(UserSettings us);
     
-    public Resource<Boolean> updateUser(Users user);
+    public Response updateUser(Users user);
     
-    public Resource<Collection<Users>> getAllUsers();
+    public Response getAllUsers();
     
     public Resource<Users> getUser(Integer id);
     
     public Resource<UserSettings> getSetting(Integer id);
     
+    public Response getUserByUsername(String username);
+    public Users getUserByEmail(String Email);
+    
     //notes
-    public Resource<Boolean> uploadNote(Notes note);
+    public Response uploadNote(Notes note);
 
-    public Resource<Collection<Notes>> viewNotes();
+    public Response viewNotes();
 
-    public Resource<Boolean> doCommentOnNotes(String cmtText,Integer noteId,Integer userId);
+    public Response doCommentOnNotes(String cmtText,Integer noteId,Integer userId);
 
-    public void replyNotesComments(NoteReplies nr);
+    public Response replyNotesComments(NoteReplies nr);
     
-    public void editNotes(Notes note);
+    public Response editNotes(Notes note);
     
-    public void deleteNote(Integer nId);
+    public Response deleteNote(Integer nId);
     
-    public Resource<Notes> getNoteById(Integer id);
+    public Response getNoteById(Integer id);
     
-    //faqs
-    public Resource<Collection<FaqMst>> viewFaqs();
-
-    public void answerFaq(Integer faqId, FaqAnswers answer);
-
-    public void voteFaq(Integer answerId, Boolean isUp, Integer userId);
-    
-    public void editFaq(FaqMst fm);
-    
-    public void deleteFaq(Integer fId);
-    
-    public Resource<FaqMst> getFaqById(Integer id);
 
     //posts
-    public Resource<Collection<PostFeedMst>> viewPosts();
+    public Response viewPosts();
     
     public void doPost(PostFeedMst pfm);
 
@@ -101,11 +92,13 @@ public interface UserBeanLocal {
     
     public void addMemberToCommunity(CommunityMembers cm);
     
-    public Resource<Collection<CommunityMsg>> loadCommunityMsg(Integer cId);
+    public Response loadCommunityMsg(Integer cId);
 
     //chat
     public Resource<Collection<MsgMst>> getAllMsg(Integer rId,Integer sId);
     
     public void sendMsg(MsgMst msg);
+
+    public Response getNoteComment(Integer commentId);
 
 }

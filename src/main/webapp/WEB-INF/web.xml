@@ -4,6 +4,14 @@
         <param-name>javax.faces.PROJECT_STAGE</param-name>
         <param-value>Development</param-value>
     </context-param>
+    <filter>
+        <filter-name>REST Filter</filter-name>
+        <filter-class>rest.MyRestFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>REST Filter</filter-name>
+        <url-pattern>/api/*</url-pattern>
+    </filter-mapping>
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
@@ -19,6 +27,46 @@
         </session-timeout>
     </session-config>
     <welcome-file-list>
-        <welcome-file>user/Master.jsf</welcome-file>
+        <welcome-file>auth/login.jsf</welcome-file>
+        <welcome-file>user/index.jsf</welcome-file>
     </welcome-file-list>
+    <!--    <security-constraint>
+        <display-name>Admin Pages</display-name>
+        <web-resource-collection>
+            <web-resource-name>Admin Pages</web-resource-name>
+            <description/>
+            <url-pattern>/admin/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>Admin</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>User Pages</display-name>
+        <web-resource-collection>
+            <web-resource-name>User Pages</web-resource-name>
+            <description/>
+            <url-pattern>/user/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>User</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <login-config>
+        <auth-method>FORM</auth-method>
+        <form-login-config>
+            <form-login-page>/auth/login.xhtml</form-login-page>
+            <form-error-page>/auth/error.xhtml</form-error-page>
+        </form-login-config>
+    </login-config>
+    <security-role>
+        <description/>
+        <role-name>User</role-name>
+    </security-role>
+    <security-role>
+        <description/>
+        <role-name>Admin</role-name>
+    </security-role>-->
 </web-app>

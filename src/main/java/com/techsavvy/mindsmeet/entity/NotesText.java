@@ -6,6 +6,7 @@ package com.techsavvy.mindsmeet.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -63,17 +64,11 @@ public class NotesText implements Serializable {
     @ManyToOne
     private Notes notesId;
 
+
+
     public NotesText() {
-    }
-
-    public NotesText(Integer id) {
-        this.id = id;
-    }
-
-    public NotesText(Integer id, Date createdAt, Date updatedAt) {
-        this.id = id;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.createdAt = createdAt == null ? new Date() : createdAt ;
+        this.updatedAt = updatedAt == null ? new Date() : updatedAt ;
     }
 
     public Integer getId() {
@@ -116,6 +111,7 @@ public class NotesText implements Serializable {
         this.updatedAt = updatedAt;
     }
 
+    @JsonbTransient
     public Notes getNotesId() {
         return notesId;
     }

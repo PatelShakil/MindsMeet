@@ -5,6 +5,8 @@
 package api;
 
 import com.techsavvy.mindsmeet.entity.FaqMst;
+import com.techsavvy.mindsmeet.entity.NoteComments;
+import com.techsavvy.mindsmeet.entity.NoteReplies;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import com.techsavvy.mindsmeet.entity.Notes;
 import com.techsavvy.mindsmeet.entity.UserSettings;
@@ -40,6 +42,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import jwt.TokenProvider;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.soteria.identitystores.hash.Pbkdf2PasswordHashImpl;
 import utils.Resource;
 
 /**
@@ -50,74 +53,74 @@ import utils.Resource;
 @Path("v1")
 @RequestScoped
 public class UserResource {
+
     /**
      * Creates a new instance of UserResource
      */
     @Inject
     IdentityStoreHandler handler;
-    
+
     CredentialValidationResult result;
     AuthenticationStatus status;
-    
+
     @Inject
     TokenProvider tokenProvider;
-    
+
     @Context
     private HttpServletRequest request;
-    
-        @Inject
+
+    @Inject
     private Pbkdf2PasswordHash passwordHasher;
 
     public UserResource() {
     }
- 
-    @EJB UserBeanLocal ubl;
-    
-    
+
+    @EJB
+    UserBeanLocal ubl;
+
     @POST
     @Path("user/login")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response doLogin(Users user){
+    public Response doLogin(Users user) {
         Resource<String> res = new Resource<>(null, "", false);
-        Credential credential = new UsernamePasswordCredential(user.getEmail(), new Password(user.getPassword()));
-        result = handler.validate(credential);
-        if (result.getStatus() == CredentialValidationResult.Status.VALID) {
-            String jwt = tokenProvider.createToken(result.getCallerPrincipal().getName(), result.getCallerGroups(), false);
-            // Assuming you have a method to generate JWT tokens
+        Users u = ubl.getUserByEmail(user.getEmail());
+        Pbkdf2PasswordHashImpl ph = new Pbkdf2PasswordHashImpl();
+        if (u != null && u.getPassword() == ph.generate(user.getPassword().toCharArray())) {
+            String jwt = tokenProvider.createToken(result.getCallerPrincipal().getName(), result.getCallerGroups(), true);
+            // Assuming you have a method to gddenerate JWT tokens
             res.setObj(jwt);
             res.setMessage("Login successful");
             res.setStatus(true);
         } else {
-            res.setMessage("Email or Password Wrong!!!" );
+            res.setMessage("Email or Password Wrong!!!");
         }
         return Response.ok(res).build();
     }
-    
+
     @POST
     @Path("user/signup")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response doSignup(Users user){
+    public Response doSignup(Users user) {
         System.out.print(user);
         user.setIsActive(Boolean.TRUE);
         user.setIsBlocked(false);
         return ubl.doSignup(user);
     }
-    
-   
+
     @GET
     @Path("all-users")
     @Produces(MediaType.APPLICATION_JSON)
-    public Resource<Collection<Users>> getAllUsers(){
+    public Response getAllUsers() {
         return ubl.getAllUsers();
     }
-    
+
     @POST
     @Path("user/update-setting")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Resource<Boolean> updateSetting(UserSettings userSetting){
+    public Response updateSetting(UserSettings userSetting) {
         System.out.println(userSetting.toString());
         UserSettings userSettings = ubl.getSetting(userSetting.getId()).getObj();
         userSettings.setIsChatEnabled(userSetting.getIsChatEnabled());
@@ -127,12 +130,12 @@ public class UserResource {
         userSettings.setIsPrivate(userSetting.getIsPrivate());
         return ubl.updateSetting(userSettings);
     }
-    
+
     @PUT
     @Path("user/update")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Resource<Boolean> updateSetting(Users user){
+    public Response updateSetting(Users user) {
         Users mUser = ubl.getUser(user.getId()).getObj();
         mUser.setName(user.getName());
         mUser.setUsername(user.getUsername());
@@ -141,26 +144,35 @@ public class UserResource {
         return ubl.updateUser(mUser);
     }
     
+    @GET
+    @Path("user/{username}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUserByUsername(@PathParam("username") String username){
+        return ubl.getUserByUsername(username);
+    }
+
     @POST
-    @Path("note/upload/{user_id}")
+    @Path("note/upload")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Resource<Boolean> uploadNote(Notes note,@PathParam("user_id") Integer userId){
-        note.setFile("C:/Dummy/path");
+    public Response uploadNote(Notes note) {
         note.setIsCommentable(Boolean.TRUE);
         note.setIsTranslatable(Boolean.TRUE);
         note.setIsVerified(false);
-        try{
-        Users user = ubl.getUser(userId).getObj();
-        if(user != null){
-            note.setUserId(user);
-        }
-            }catch(Exception e){
-                return new Resource(false,"User Not Exist",false);
+        try {
+            Users user = ubl.getUserByEmail(note.getUserId().getEmail());
+            if (user != null) {
+                note.setUserId(user);
+            }else{
+                throw new Exception();
             }
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+
+        }
         return ubl.uploadNote(note);
     }
-    
+
 //    @POST
 //    @Path("note/upload")
 //    @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -185,11 +197,6 @@ public class UserResource {
 //        note.setFile(filePath); // Save the file path or URL
 //        return ubl.uploadNote(note);
 //    }
-//    
-    
-    
-    
-    
     // Method to handle the file upload
     public void saveFile(InputStream uploadedInputStream, String filePath) {
         try {
@@ -200,35 +207,50 @@ public class UserResource {
             // Handle the exception properly
         }
     }
-    
+
     @GET
     @Path("note/get-all")
     @Produces(MediaType.APPLICATION_JSON)
-    public Resource<Collection<Notes>> getAllNotes(){
+    public Response getAllNotes() {
         return ubl.viewNotes();
     }
-    
+
     @GET
     @Path("note/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Resource<Notes> getNotesById(@PathParam("id") Integer id){
+    public Response getNotesById(@PathParam("id") Integer id) {
         return ubl.getNoteById(id);
     }
-    
-    @GET
-    @Path("faq/{id}")
+
+    @POST
+    @Path("note/comment/{note_id}/{user_id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Resource<FaqMst> getFaqById(@PathParam("id") Integer id){
-        return ubl.getFaqById(id);
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response doCommentOnNote(NoteComments nc, @PathParam("note_id") Integer noteId, @PathParam("user_id") Integer userId) {
+        System.out.print(userId);
+        return ubl.doCommentOnNotes(nc.getCommentText(), noteId, userId);
     }
-    
-    @GET
-    @Path("faq/get-all")
+
+    @POST
+    @Path("note/comment/reply/{comment_id}/{user_id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Resource<Collection<FaqMst>> getAllFaqs(){
-        return ubl.viewFaqs();
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response doCommentReply(NoteReplies nr, @PathParam("comment_id") Integer commentId, @PathParam("user_id") Integer userId) {
+        NoteComments nc = ubl.getNoteComment(commentId).readEntity(NoteComments.class);
+        nr.setCommentId(nc);
+        Users user = ubl.getUser(userId).getObj();
+        nr.setUserId(user);
+        return ubl.replyNotesComments(nr);
     }
-    
+
+  
+
+    @GET
+    @Path("post/get-all")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllPosts() {
+        return ubl.viewPosts();
+    }
     
     
 

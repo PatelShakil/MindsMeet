@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:pe="http://primefaces.org/ui/extensions"
+        
+    xmlns:p="http://primefaces.org/ui">    
+    <body>
+
+        <ui:composition template="./../Master.xhtml">
+
+            <ui:define name="content">
+                <h:form>
+                    <div class="container mx-auto p-6">
+                        <div class="bg-white shadow-md rounded-lg p-4">
+                            <h1 class="text-2xl font-bold mb-4">#{faqDetailBean.faq.que}</h1>
+                            <p class="text-gray-600 mb-4">#{faqDetailBean.faq.description}</p>
+                            <p class="text-gray-500 text-sm mb-2">Uploaded by: <b>#{faqDetailBean.faq.userId.username}</b></p>
+                            <!-- Title Field -->
+                            <div class="mb-4 rounded border border-1 shadow-md bg-gray-100 p-1">
+                                <label for="code" class="block text-gray-700 font-bold mb-2">Attached Code</label>
+                                <pe:codeMirror id="codeMirror" mode="javascript" theme="blackboard"
+                                               value="#{faqDetailBean.faq.code}" keyMap="default" lineNumbers="true"
+                                               matchBrackets="true" smartIndent="true" class="h-96 rounded shadow-sm" readonly="true" />
+                            </div>
+                            <p:messages closable="true" showDetail="true" showSummary="true"  />
+
+                            <div class="flex justify-content-end items-end">
+                                <p:commandButton value="Add Comment" class="btn bg-green-400 p-1 px-2 shadow-md rounded-md text-white hover:bg-green-500"
+                                                 actionListener="#{faqDetailBean.openDialog}" 
+                                                 oncomplete="PF('commentDialog').show();" />
+                            </div>
+                            
+                          
+                        </div> 
+                        
+                        <div class="bg-white shadow-md rounded-lg p-2">
+                            <ui:repeat value="#{faqDetailBean.faq.faqAnswersCollection}" var="ans">
+                                <div class="border border-1 my-1 p-2" >
+                                    <p class="mb-1">#{ans.answer}</p>
+
+                                    <pe:codeMirror id="codeMirrorAns" mode="javascript" theme="blackboard"
+                                                   value="#{ans.code}" keyMap="default" lineNumbers="true"
+                                                   matchBrackets="true" smartIndent="true" class="h-96 rounded shadow-sm" readonly="true" />
+                                </div>
+                            </ui:repeat>
+                            
+                        </div>
+                        <p:dialog id="commentDialog" header="Add Comment" 
+                                  class="flex flex-col gap-y-2" position="center" widgetVar="commentDialog" 
+                                  modal="true" draggable="false" fitViewport="true" closable="true" 
+                                  appendTo="@(body)">
+                            <div class="flex flex-col gap-y-2">    
+                                <h:outputLabel class="block text-gray-700 font-bold" value="Your Comment:" />
+                                <p:inputTextarea class="mb-4" value="#{faqDetailBean.answer}" rows="5" cols="50" 
+                                                 placeholder="Enter your Answer / Experience / Suggestions" required="true"/>
+
+                                <h:outputLabel class="block text-gray-700 font-bold" value="Your Code (optional):" />
+                                <pe:codeMirror id="codeMirror1" mode="javascript" theme="blackboard"
+                                               value="#{faqDetailBean.code}" keyMap="default" lineNumbers="true"
+                                               matchBrackets="true" smartIndent="true" class="h-96" />
+                                <p:commandButton class="mb-4" value="Submit" 
+                                                 actionListener="#{faqDetailBean.submitComment()}" 
+                                                 oncomplete="PF('commentDialog').hide();" />
+                            </div>
+                        </p:dialog>
+
+
+                    </div>
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

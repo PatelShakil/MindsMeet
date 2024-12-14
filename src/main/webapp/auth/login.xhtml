@@ -9,6 +9,15 @@
     <h:head>
         <title>Login | MindsMeet</title>
         <script src="https://cdn.tailwindcss.com"></script>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display;');
+            *{
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: "Poppins", sans-serif;
+            }
+        </style>
     </h:head>
     <h:body>
         <h:form class="flex flex-col lg:m-20 m-10 gap-y-5">
@@ -16,8 +25,9 @@
             <p:messages closable="true" showDetail="true" showSummary="true"  />
             <p:inputText type="email" placeholder="Enter Your Email" required='true' value='#{authBean.email}' />
             <p:inputText type="password" placeholder="Enter Your Password" required='true' value='#{authBean.password}'/>
+            <p:selectBooleanCheckbox value="#{authBean.isrememberme}" itemLabel="Remember Me" />
             <h:commandButton type="submit" value="Login" class=" p-2 py-2 bg-green-500 rounded" action='#{authBean.onLogin()}' />       
         </h:form>
-        <p class="text-center">Don't have an Account yet ? <p:link href="register.jsf">Register</p:link></p>
+        <p class="text-center">Don't have an Account yet ? <p:link href="#{utility.APP_PATH}auth/register.jsf">Register</p:link></p>
     </h:body>
 </html>

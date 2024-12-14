@@ -240,6 +240,7 @@
             this.groupUsersCollection = groupUsersCollection;
         }
 
+        @JsonbTransient
         public Collection<FaqMst> getFaqMstCollection() {
             return faqMstCollection;
         }
@@ -273,6 +274,7 @@
             this.faqVotesCollection = faqVotesCollection;
         }
 
+        @JsonbTransient
         public Collection<NoteReplies> getNoteRepliesCollection() {
             return noteRepliesCollection;
         }
@@ -289,6 +291,7 @@
             this.postCommentsCollection = postCommentsCollection;
         }
 
+        @JsonbTransient
         public Collection<NoteComments> getNoteCommentsCollection() {
             return noteCommentsCollection;
         }

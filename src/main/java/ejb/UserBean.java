@@ -10,6 +10,8 @@ import com.techsavvy.mindsmeet.entity.CommunityMst;
 import com.techsavvy.mindsmeet.entity.CommunityReply;
 import com.techsavvy.mindsmeet.entity.FaqAnswers;
 import com.techsavvy.mindsmeet.entity.FaqMst;
+import com.techsavvy.mindsmeet.entity.FaqScreenshot;
+import com.techsavvy.mindsmeet.entity.FaqVotes;
 import com.techsavvy.mindsmeet.entity.GroupMst;
 import com.techsavvy.mindsmeet.entity.GroupUsers;
 import com.techsavvy.mindsmeet.entity.MsgMst;
@@ -23,31 +25,26 @@ import com.techsavvy.mindsmeet.entity.Users;
 import jakarta.annotation.security.DeclareRoles;
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.Level;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.security.enterprise.credential.Password;
 import javax.security.enterprise.identitystore.Pbkdf2PasswordHash;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.Response;
-import sun.util.logging.resources.logging;
+import org.glassfish.soteria.identitystores.hash.Pbkdf2PasswordHashImpl;
 import utils.Resource;
+import utils.Utils;
 
 /**
  *
  * @author M.SHAKIL PATEL
  */
-@DeclareRoles({"User"})
 @Stateless
 public class UserBean implements UserBeanLocal {
 
     @PersistenceContext(unitName = "my_mindsmeet_pu")
     EntityManager em;
-
-    @Inject
-    private Pbkdf2PasswordHash passwordHasher;
 
     @Override
     public Resource<Users> doLogin(String email, String password) {
@@ -92,9 +89,11 @@ public class UserBean implements UserBeanLocal {
         System.out.print(user);
 
         try {
-
+            Pbkdf2PasswordHashImpl passwordHasher = new Pbkdf2PasswordHashImpl();
+            
             String hashedPassword = passwordHasher.generate(user.getPassword().toCharArray());
             user.setPassword(hashedPassword);
+            System.out.println(hashedPassword);
             em.persist(user); // Persist the new user into the database
             em.flush();
             Users u = em.find(Users.class, user.getId()); // Retrieve the persisted user using its ID
@@ -130,20 +129,15 @@ public class UserBean implements UserBeanLocal {
     }
 
     @Override
-    public Resource<Boolean> updateSetting(UserSettings us) {
-        Resource<Boolean> res = new Resource(null, "", false);
+    public Response updateSetting(UserSettings us) {
 
         try {
             em.merge(us);
             em.flush();
-            res.setStatus(Boolean.TRUE);
-            res.setMessage("Setting Updated");
-            res.setObj(Boolean.TRUE);
+            return Response.ok().build();
         } catch (Exception e) {
-            res.setStatus(false);
-            res.setMessage(e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
         }
-        return res;
     }
 
     @Override
@@ -155,55 +149,42 @@ public class UserBean implements UserBeanLocal {
     }
 
     @Override
-    public Resource<Boolean> updateUser(Users user) {
-        Resource<Boolean> res = new Resource(null, "", false);
-
+    public Response updateUser(Users user) {
         try {
             em.merge(user);
             em.flush();
-            res.setStatus(Boolean.TRUE);
-            res.setMessage("User Updated");
-            res.setObj(Boolean.TRUE);
+            return Response.ok().build();
         } catch (Exception e) {
-            res.setStatus(false);
-            res.setMessage(e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
         }
-        return res;
     }
 
     @Override
-    public Resource<Boolean> uploadNote(Notes note) {
-        Resource<Boolean> res = new Resource<>(false, "", false);
+    public Response uploadNote(Notes note) {
         try {
             em.persist(note);
-            em.flush();
-            res.setStatus(true);
-            res.setMessage("Note uploaded and saved successfully!");
-            res.setObj(true);
+            note.getNotesTextCollection().forEach((p) -> {
+                p.setNotesId(note);
+                em.persist(p);
+            });
+            return Response.ok("Note Uploaded Successfully").build();
         } catch (Exception e) {
-            e.printStackTrace();
-            res.setMessage("Error saving note: " + e.getMessage());
+            return Utils.getCatch(e);
+
         }
-        return res;
     }
 
     @Override
-    public Resource<Collection<Notes>> viewNotes() {
-        Resource<Collection<Notes>> res = new Resource(null, "", false);
+    public Response viewNotes() {
         try {
-            res.setStatus(Boolean.TRUE);
-            res.setMessage("All Notes");
-            res.setObj(em.createNamedQuery("Notes.findAll").getResultList());
+            return Response.ok(em.createNamedQuery("Notes.findAll").getResultList()).build();
         } catch (Exception e) {
-            res.setStatus(false);
-            res.setMessage(e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
         }
-        return res;
     }
 
     @Override
-    public Resource<Boolean> doCommentOnNotes(String cmtText, Integer noteId, Integer userId) {
-        Resource<Boolean> res = new Resource(null, "", false);
+    public Response doCommentOnNotes(String cmtText, Integer noteId, Integer userId) {
         Users user = em.find(Users.class, userId);
         Notes note = em.find(Notes.class, noteId);
 
@@ -213,65 +194,43 @@ public class UserBean implements UserBeanLocal {
         nc.setUserId(user);
         try {
             em.persist(nc);
-            res.setStatus(true);
-            res.setMessage("Commented");
-            res.setObj(Boolean.TRUE);
+            return Response.ok("Commented Successfully").build();
         } catch (Exception e) {
             e.printStackTrace();
-            res.setStatus(Boolean.FALSE);
-            res.setObj(false);
-            res.setMessage(e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
         }
-        return res;
     }
 
     @Override
-    public void replyNotesComments(NoteReplies nr) {
-        em.persist(nr);
+    public Response getNoteComment(Integer id) {
+        NoteComments nc = em.find(NoteComments.class, id);
+        return Response.ok(nc).build();
     }
 
     @Override
-    public void editNotes(Notes note) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void deleteNote(Integer nId) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public Resource<Collection<FaqMst>> viewFaqs() {
-        Resource<Collection<FaqMst>> res = new Resource(null, "", false);
+    public Response replyNotesComments(NoteReplies nr) {
         try {
-            res.setStatus(Boolean.TRUE);
-            res.setMessage("All Faqs");
-            res.setObj(em.createNamedQuery("FaqMst.findAll").getResultList());
+            em.persist(nr);
+            return Response.ok("Reply Added!!!").build();
         } catch (Exception e) {
-            res.setStatus(false);
-            res.setMessage(e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
         }
-        return res;
     }
 
     @Override
-    public void answerFaq(Integer faqId, FaqAnswers answer) {
+    public Response editNotes(Notes note) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public void voteFaq(Integer answerId, Boolean isUp, Integer userId) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void editFaq(FaqMst fm) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void deleteFaq(Integer fId) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public Response deleteNote(Integer nId) {
+        try {
+            Notes note = em.find(Notes.class, nId);
+            em.remove(note);
+            return Response.ok().build();
+        } catch (Exception e) {
+            return Utils.getCatch(e);
+        }
     }
 
     @Override
@@ -345,29 +304,21 @@ public class UserBean implements UserBeanLocal {
     }
 
     @Override
-    public Resource<Collection<CommunityMsg>> loadCommunityMsg(Integer cId) {
+    public Response loadCommunityMsg(Integer cId) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Resource<Collection<PostFeedMst>> viewPosts() {
+    public Response viewPosts() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Resource<Collection<Users>> getAllUsers() {
-        Resource<Collection<Users>> res = new Resource(null, "", false);
-        res.setMessage("Users List");
-        res.setObj(em.createNamedQuery("Users.findAll")
-                .getResultList());
-
-        if (res.getObj() != null || !res.getObj().isEmpty()) {
-            res.setStatus(true);
-            return res;
-        } else {
-            res.setMessage("No users exists!!!");
-            return res;
-
+    public Response getAllUsers() {
+        try {
+            return Response.ok(em.createNamedQuery("Users.findAll").getResultList()).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
         }
     }
 
@@ -388,41 +339,40 @@ public class UserBean implements UserBeanLocal {
     }
 
     @Override
-    public Resource<Notes> getNoteById(Integer id) {
-        Resource<Notes> res = new Resource();
+    public Response getNoteById(Integer id) {
         try {
             Notes note = em.find(Notes.class, id);
             if (note != null) {
-                res.setObj(note);
-                res.setStatus(Boolean.TRUE);
+                return Response.ok(note).build();
             } else {
-                res.setStatus(false);
-                res.setMessage("No Note Found");
+                return Response.status(Response.Status.NOT_FOUND).build();
             }
         } catch (Exception e) {
-            res.setMessage(e.getMessage());
-            res.setStatus(false);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+
         }
-        return res;
+    }
+
+  
+
+    @Override
+    public Response getUserByUsername(String username) {
+        try{
+            Users user =(Users) em.createQuery("select u from Users u where u.username = :username").setParameter("username", username).getSingleResult();
+            if(user != null){
+                return Response.ok(user).build();
+            }else{
+                return Response.status(404).build();
+            }
+        }catch(Exception e){
+            return Response.serverError().build();
+        }
     }
 
     @Override
-    public Resource<FaqMst> getFaqById(Integer id) {
-        Resource<FaqMst> res = new Resource();
-        try {
-            FaqMst faq = em.find(FaqMst.class, id);
-            if (faq != null) {
-                res.setObj(faq);
-                res.setStatus(Boolean.TRUE);
-            } else {
-                res.setStatus(false);
-                res.setMessage("No Faq Found");
-            }
-        } catch (Exception e) {
-            res.setMessage(e.getMessage());
-            res.setStatus(false);
-        }
-        return res;
+    public Users getUserByEmail(String email) {
+        Users user =(Users) em.createNamedQuery("Users.findByEmail").setParameter("email", email).getSingleResult();
+    return user;
     }
 
 }

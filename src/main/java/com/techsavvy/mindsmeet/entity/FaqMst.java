@@ -68,8 +68,6 @@ public class FaqMst implements Serializable {
     @ManyToOne
     private Users userId;
     @OneToMany(mappedBy = "faqId")
-    private Collection<FaqVotes> faqVotesCollection;
-    @OneToMany(mappedBy = "faqId")
     private Collection<FaqScreenshot> faqScreenshotCollection;
     @OneToMany(mappedBy = "faqId")
     private Collection<FaqAnswers> faqAnswersCollection;
@@ -104,21 +102,12 @@ public class FaqMst implements Serializable {
         this.updatedAt = updatedAt;
     }
 
-    @JsonbTransient
     public Users getUserId() {
         return userId;
     }
 
     public void setUserId(Users userId) {
         this.userId = userId;
-    }
-
-    public Collection<FaqVotes> getFaqVotesCollection() {
-        return faqVotesCollection;
-    }
-
-    public void setFaqVotesCollection(Collection<FaqVotes> faqVotesCollection) {
-        this.faqVotesCollection = faqVotesCollection;
     }
 
     public Collection<FaqScreenshot> getFaqScreenshotCollection() {

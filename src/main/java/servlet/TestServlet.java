@@ -58,12 +58,10 @@ public class TestServlet extends HttpServlet {
 
 //        Resource<Users> res = ubl.doSignup(user);
 //        Resource<Users> res = ubl.doLogin("abc@gmail.com","12345678");
-        Resource<Collection<Users>> res = ubl.getAllUsers();
         
         // Convert the result  JSON and write to the response
         
         
-        out.print(res.toString()); // Send the JSON response back to the client
         out.flush(); // Ensure the response is sent
     }
 }

@@ -30,7 +30,7 @@ import javax.security.enterprise.identitystore.Pbkdf2PasswordHash;
 //)
 // Identity Store
 @DatabaseIdentityStoreDefinition(
-        dataSourceLookup = "jdbc/mindsmeet_pool",
+        dataSourceLookup = "jdbc/my_mindsmeet_pool",
         callerQuery = "select password from users where email = ?",
         groupsQuery = "select type from group_mst where id = (select group_id from group_users where user_id = (select id from users where email = ?))",
         hashAlgorithm = Pbkdf2PasswordHash.class,

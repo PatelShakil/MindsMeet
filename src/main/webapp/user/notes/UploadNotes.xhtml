@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <body>
+
+        <ui:composition template="./../Master.xhtml">
+
+            <ui:define name="content">
+                <h:form enctype="multipart/form-data" class="max-w-lg mx-auto p-4 bg-white shadow-lg rounded-lg space-y-4">
+                    <p class="text-center text-xl">Upload Note</p>
+                    <p:messages closable="true" showDetail="true" showSummary="true"  />
+
+                    <!-- Title Field -->
+                    <div class="mb-4">
+                        <label for="title" class="block text-gray-700 font-bold mb-2">Title</label>
+                        <p:inputText id="title" value="#{uploadNotesBean.title}" required="true" 
+                                     placeholder="Enter the title"
+                                     class="p-inputtext w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    </div>
+
+                    <!-- Description Field -->
+                    <div class="mb-4">
+                        <label for="description" class="block text-gray-700 font-bold mb-2">Description</label>
+                        <p:inputTextarea id="description" value="#{uploadNotesBean.description}" required="true" 
+                                         placeholder="Enter a brief description"
+                                         class="p-inputtextarea w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    </div>
+
+                    <!-- Public Checkbox -->
+                    <div class="mb-4">
+                        <p:selectBooleanCheckbox id="public" value="#{uploadNotesBean.isPublic}" 
+                                                 class="form-checkbox text-blue-500" />
+                        <label for="public" class="inline-block text-gray-700 ml-2">Public</label>
+                    </div>
+
+                    <!-- File Upload -->
+                    <div class="mb-4">
+                        <label for="fileUpload" class="block text-gray-700 font-bold mb-2">Upload PDF</label>
+                        <p:fileUpload id="fileUpload" mode="advanced" 
+                                      accept=".pdf" 
+                                      fileLimit="1" 
+                                      label="Choose PDF"
+                                      auto="true"
+                                      required="true"
+                                      listener="#{uploadNotesBean.handleFileUpload}"
+                                      class="p-fileupload w-full border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div>
+                        <p:commandButton value="Submit" 
+                                         action="#{uploadNotesBean.submit}" 
+                                         class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded cursor-pointer" />
+                    </div>
+
+                </h:form>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

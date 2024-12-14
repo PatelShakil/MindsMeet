@@ -6,6 +6,7 @@ package com.techsavvy.mindsmeet.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -60,16 +61,8 @@ public class FaqScreenshot implements Serializable {
     private FaqMst faqId;
 
     public FaqScreenshot() {
-    }
-
-    public FaqScreenshot(Integer id) {
-        this.id = id;
-    }
-
-    public FaqScreenshot(Integer id, Date createdAt, Date updatedAt) {
-        this.id = id;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.createdAt = createdAt == null ? new Date() : createdAt;
+        this.updatedAt = updatedAt == null ? new Date() : updatedAt;
     }
 
     public Integer getId() {
@@ -104,6 +97,7 @@ public class FaqScreenshot implements Serializable {
         this.updatedAt = updatedAt;
     }
 
+    @JsonbTransient
     public FaqMst getFaqId() {
         return faqId;
     }

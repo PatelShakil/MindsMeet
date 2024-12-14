@@ -6,6 +6,7 @@ package com.techsavvy.mindsmeet.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -36,10 +37,6 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "FaqVotes.findByUpdatedAt", query = "SELECT f FROM FaqVotes f WHERE f.updatedAt = :updatedAt")})
 public class FaqVotes implements Serializable {
 
-    @Lob
-    @Size(max = 2147483647)
-    @Column(name = "code")
-    private String code;
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
@@ -53,25 +50,30 @@ public class FaqVotes implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    @JoinColumn(name = "faq_id", referencedColumnName = "id")
+    @JoinColumn(name = "faq_ans_id", referencedColumnName = "id")
     @ManyToOne
-    private FaqMst faqId;
+    private FaqAnswers ansId;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne
     private Users userId;
+    @Column(name = "is_up_vote")
+    private Boolean isUpVote;
+    
 
     public FaqVotes() {
+        this.createdAt = createdAt == null ? new Date() : createdAt;
+        this.updatedAt = updatedAt == null ? new Date() : updatedAt;
     }
 
-    public FaqVotes(Integer id) {
-        this.id = id;
+    public Boolean getIsUpVote() {
+        return isUpVote;
     }
 
-    public FaqVotes(Integer id, Date createdAt, Date updatedAt) {
-        this.id = id;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+    public void setIsUpVote(Boolean isUpVote) {
+        this.isUpVote = isUpVote;
     }
+    
+    
 
     public Integer getId() {
         return id;
@@ -98,12 +100,13 @@ public class FaqVotes implements Serializable {
         this.updatedAt = updatedAt;
     }
 
-    public FaqMst getFaqId() {
-        return faqId;
+    @JsonbTransient
+    public FaqAnswers getAns() {
+        return ansId;
     }
 
-    public void setFaqId(FaqMst faqId) {
-        this.faqId = faqId;
+    public void setAns(FaqAnswers faqId) {
+        this.ansId = faqId;
     }
 
     public Users getUserId() {
@@ -139,14 +142,5 @@ public class FaqVotes implements Serializable {
         return "com.techsavvy.mindsmeet.entity.FaqVotes[ id=" + id + " ]";
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-   
-    
+     
 }

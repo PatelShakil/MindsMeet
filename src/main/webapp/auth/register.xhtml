@@ -6,6 +6,15 @@
     <h:head>
         <title>Register | MindsMeet</title>
         <script src="https://cdn.tailwindcss.com"></script>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display;');
+            *{
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: "Poppins", sans-serif;
+            }
+        </style> 
     </h:head>
     <h:body>
         <h:form class="flex flex-col lg:m-20 m-10 gap-y-5">
@@ -22,7 +31,7 @@
                           label="Upload Profile"
                           update="imagePanel"
                           class=""
-                          oncomplete="PF('imagePanel').show();"
+                          oncomplete="PF('imagePanel1').show();"
                           uploadButtonTitle="Choose Profile"
                           />
             </div>

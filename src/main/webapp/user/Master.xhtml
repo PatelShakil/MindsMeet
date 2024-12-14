@@ -2,40 +2,150 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
 
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <h:outputStylesheet name="./css/default.css"/>
-        <h:outputStylesheet name="./css/cssLayout.css"/>
-        <h:outputStylesheet name="./css/tailwindcss.css"/>
-        <script src="https://cdn.tailwindcss.com"></script>
 
+        <script src="https://cdn.tailwindcss.com"></script>
 
         <h:outputStylesheet>
             <link rel="preconnect" href="https://fonts.googleapis.com" />
-            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin='true' />
-            <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400&amp;display=swap" rel="stylesheet" />
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="true" />
+            <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400&amp;display=swap" rel="stylesheet" />
         </h:outputStylesheet>
-        
 
         <title>Home | MindsMeet</title>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display;');
+            *{
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: "Poppins", sans-serif;
+            }
+        </style>
     </h:head>
 
-    <h:body>
+    <h:body class="font-poppins bg-gray-100">
 
-
-        <div id="top" class="top">
-            <ui:insert name="top">Top</ui:insert>
-        </div>
-        <div>
-            <div id="left">
-                <ui:insert name="left">Left</ui:insert>
+        <!-- Top Header -->
+        <div id="top" class="fixed flex justify-between items-center z-10 bg-green-600 text-white py-3 px-6 shadow-md w-full">
+            <div class="flex gap-1 items-center">
+                
+            <button id="menu" onclick="open = !open"
+                    class="top-3 left-4 bg-green-500 px-2 py-1 rounded-full focus:outline-none hover:bg-white">
+                <i class="pi pi-bars hover:bg-green-600"></i>
+            </button>
+            <h1 class="ml-8 text-2xl font-semibold">MindsMeet</h1>
             </div>
-            <div id="content" class="left_content">
+            <p:commandButton class="bg-red-300" action="#{authBean.logout()}" value="Logout" />
+        </div>
+
+        <div class="flex h-screen pt-14">
+            <!-- Sidebar -->
+            <div id="left" class="bg-gray-800 text-white w-64 flex-shrink-0 transition-all duration-300 transform translate-x-0 lg:translate-x-0"
+                 x-data="{ open: true }">
+
+                <!-- Sidebar toggle button -->
+
+
+                <!-- Sidebar Content -->
+                <div class="h-full flex flex-col">
+                    <div class="flex-grow">
+                        <div class="flex gap-1 items-center">
+                            <h:graphicImage class="h-12 w-12 rounded-full border-4 border-white dark:border-gray-800 mx-auto my-2" value="#{utility.user.profile}" alt="#{utility.user.profile}" />
+                                                    <h2 class="text-lg font-bold py-4 px-4 border-b border-gray-700">#{utility.user.username}</h2>
+
+                        </div>
+                        <ul class="space-y-2 mt-4 px-2">
+                            <li id="home-tab" class="hover:bg-green-500 rounded px-3 py-2 transition-colors duration-200">
+                                <a href="http://localhost:8080/MindsMeet/user/index.jsf" class="block">Home</a>
+                            </li>
+                            <li id="notes-tab" class="hover:bg-green-500 rounded px-3 py-2 transition-colors duration-200">
+                                <a href="http://localhost:8080/MindsMeet/user/notes/ViewNotes.jsf" class="block">Notes</a>
+                            </li>
+                            <li id="faq-tab" class="hover:bg-green-500 rounded px-3 py-2 transition-colors duration-200">
+                                <a href="http://localhost:8080/MindsMeet/user/faq/ViewFaqs.jsf" class="block">FAQs</a>
+                            </li>
+                            <li id="community-tab" class="hover:bg-green-500 rounded px-3 py-2 transition-colors duration-200">
+                                <a href="http://localhost:8080/MindsMeet/user/community/index.jsf" class="block">Communities</a>
+                            </li>
+                            <li id="posts-tab" class="hover:bg-green-500 rounded px-3 py-2 transition-colors duration-200">
+                                <a href="http://localhost:8080/MindsMeet/user/posts/index.jsf" class="block">Posts</a>
+                            </li>
+                            <li id="chat-tab" class="hover:bg-green-500 rounded px-3 py-2 transition-colors duration-200">
+                                <a href="http://localhost:8080/MindsMeet/user/chat/index.jsf" class="block">Chat</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="p-4 border-t border-gray-700">
+                        <p class="text-sm text-gray-400">© 2024 MindsMeet by <br /> <p:link href="https://tech-savvy-solution.web.app" >Tech Savvy Solution</p:link> </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div id="content" class="flex-1 p-6 overflow-y-visible  ">
                 <ui:insert name="content">Content</ui:insert>
             </div>
         </div>
-    </h:body>
 
+        <!-- Tailwind Alpine.js for sidebar behavior -->
+        <script>
+            let menu = document.getElementById("menu");
+            let left = document.getElementById("left");
+            menu.onclick = function () {
+                console.log(left.classList);
+                if (left.classList.contains("hidden")) {
+                    left.classList.add("flex");
+                    left.classList.remove("hidden");
+                } else {
+                    left.classList.add("hidden");
+                    left.classList.remove("flex");
+                }
+            };
+            // Function to highlight the correct sidebar menu item based on URL path
+            window.onload = function () {
+                // Get the current path from the URL
+                const currentPath = window.location.pathname;
+
+                // List of sidebar items and their corresponding paths
+                const sidebarItems = [
+                    {id: 'notes-tab', path: '/notes'},
+                    {id: 'posts-tab', path: '/posts'},
+                    {id: 'faq-tab', path: '/faq'}, // Replace with the correct path if needed
+                    {id: 'community-tab', path: '/community'}, // Replace with the correct path if needed
+                    {id: 'chat-tab', path: '/chat'} // Replace with the correct path if needed
+                ];
+
+// ID for the home tab
+                const homeTabId = 'home-tab';
+
+// Check if any sidebar item matches the current path
+                let isMatchFound = false;
+                // Loop through the sidebar items and highlight the matching tab
+                sidebarItems.forEach(item => {
+                    if (currentPath.includes(item.path)) {
+                        document.getElementById(item.id).classList.add('bg-green-500');
+                        isMatchFound = true;
+                    } else {
+                        document.getElementById(item.id).classList.remove('bg-green-500');
+                    }
+                });// If no match is found, highlight the home tab
+                if (!isMatchFound) {
+                    document.getElementById(homeTabId).classList.add('bg-green-500');
+                } else {
+                    document.getElementById(homeTabId).classList.remove('bg-green-500');
+                }
+
+
+
+
+            };
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.12.0/dist/cdn.min.js"></script>
+
+    </h:body>
 </html>

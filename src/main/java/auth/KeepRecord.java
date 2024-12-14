@@ -5,7 +5,11 @@
  */
 package auth;
 
+import java.io.Serializable;
 import java.util.Set;
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Named;
 import javax.security.enterprise.CallerPrincipal;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
 
@@ -13,13 +17,16 @@ import javax.security.enterprise.identitystore.CredentialValidationResult;
  *
  * @author root
  */
-public class KeepRecord {
+@Named
+@SessionScoped
+public class KeepRecord implements Serializable {
+
     private static CredentialValidationResult result;
     private static CallerPrincipal principal;
-   private static Set<String> roles;
-   private static String token;
-   private static String username;
-   private static String password;
+    private static Set<String> roles;
+    private static String token;
+    private static String username;
+    private static String password;
 
     public static String getUsername() {
         return username;
@@ -68,13 +75,11 @@ public class KeepRecord {
     public static void setToken(String token) {
         KeepRecord.token = token;
     }
-   
-    public static void reset()
-    {
-        
-       principal=null;
-       token=null;
+
+    public static void reset() {
+
+        principal = null;
+        token = null;
     }
-    
-    
+
 }

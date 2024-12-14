@@ -4,14 +4,9 @@
  */
 package api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.techsavvy.mindsmeet.entity.Users;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import utils.Resource;
 
 /**
  * Jersey REST client generated for REST resource:UserResource [v1]<br>
@@ -23,7 +18,7 @@ import utils.Resource;
  *        client.close();
  * </pre>
  *
- * @author M.SHAKIL PATEL
+ * @author Acer
  */
 public class UserApi {
 
@@ -46,12 +41,48 @@ public class UserApi {
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(responseType);
     }
 
+    public <T> T getAllNotes(Class<T> responseType) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path("note/get-all");
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(responseType);
+    }
+
     public <T> T doLogin(Object requestEntity, Class<T> responseType) throws ClientErrorException {
         return webTarget.path("user/login").request(javax.ws.rs.core.MediaType.APPLICATION_JSON).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_JSON), responseType);
     }
 
     public <T> T updateSetting(Object requestEntity, Class<T> responseType) throws ClientErrorException {
         return webTarget.path("user/update").request(javax.ws.rs.core.MediaType.APPLICATION_JSON).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_JSON), responseType);
+    }
+
+    public <T> T uploadNote(Object requestEntity, Class<T> responseType) throws ClientErrorException {
+        return webTarget.path("note/upload").request(javax.ws.rs.core.MediaType.APPLICATION_JSON).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_JSON), responseType);
+    }
+
+    public <T> T getUserByUsername(Class<T> responseType, String username) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("user/{0}", new Object[]{username}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(responseType);
+    }
+
+    public <T> T getNotesById(Class<T> responseType, String id) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("note/{0}", new Object[]{id}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(responseType);
+    }
+
+    public <T> T doCommentOnNote(Object requestEntity, Class<T> responseType, String note_id, String user_id) throws ClientErrorException {
+        return webTarget.path(java.text.MessageFormat.format("note/comment/{0}/{1}", new Object[]{note_id, user_id})).request(javax.ws.rs.core.MediaType.APPLICATION_JSON).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_JSON), responseType);
+    }
+
+    public <T> T doCommentReply(Object requestEntity, Class<T> responseType, String comment_id, String user_id) throws ClientErrorException {
+        return webTarget.path(java.text.MessageFormat.format("note/comment/reply/{0}/{1}", new Object[]{comment_id, user_id})).request(javax.ws.rs.core.MediaType.APPLICATION_JSON).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_JSON), responseType);
+    }
+
+    public <T> T getAllPosts(Class<T> responseType) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path("post/get-all");
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(responseType);
     }
 
     public void close() {

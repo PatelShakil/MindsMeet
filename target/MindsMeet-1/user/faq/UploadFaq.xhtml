@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"     
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      >
+
+    <body>
+
+        <ui:composition template="./../Master.xhtml">
+
+            <ui:define name="content">
+                <h:form enctype="multipart/form-data" class="max-w-lg mx-auto p-4 bg-white shadow-lg rounded-lg space-y-4">
+                    <p class="text-center text-xl">Upload Faq</p>
+                    <p:messages closable="true" showDetail="true" showSummary="true"  />
+
+                    <!-- Title Field -->
+                    <div class="mb-4">
+                        <label for="Question" class="block text-gray-700 font-bold mb-2">Question</label>
+                        <p:inputText id="Question" value="#{faqBean.question}" required="true" 
+                                     placeholder="Enter the Question"
+                                     class="p-inputtext w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    </div>
+
+                    <!-- Title Field -->
+                    <div class="mb-4">
+                        <label for="description" class="block text-gray-700 font-bold mb-2">Description</label>
+                        <p:inputTextarea rows="3" id="description" value="#{faqBean.description}" required="true" 
+                                     placeholder="Enter the Description"
+                                     class="p-inputtext w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    </div>
+
+                    <!-- Title Field -->
+                    <div class="mb-4">
+                        <label for="code" class="block text-gray-700 font-bold mb-2">Code ( Optional )</label>
+                        <pe:codeMirror id="codeMirror" mode="javascript" theme="blackboard"
+                                       value="#{faqBean.code}" keyMap="default" lineNumbers="true"
+                                       matchBrackets="true" smartIndent="true" class="h-96" />
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <div>
+                        <p:commandButton value="Submit" 
+                                         action="#{faqBean.uploadFaq()}" 
+                                         class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded cursor-pointer" />
+                    </div>                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>
