@@ -6,7 +6,9 @@ package cdi.faq;
 
 import api.FaqApi;
 import api.UserApi;
+import auth.KeepRecord;
 import com.techsavvy.mindsmeet.entity.FaqMst;
+import com.techsavvy.mindsmeet.entity.Users;
 import java.io.Serializable;
 import java.util.Collection;
 import javax.inject.Named;
@@ -39,23 +41,29 @@ public class FaqBean implements Serializable {
         api = new FaqApi();
     }
 
-    public void uploadFaq() {
+    public String uploadFaq() {
         FaqMst faq = new FaqMst();
         faq.setCode(code);
         faq.setQue(question);
         faq.setDescription(description);
+        Users userId = new Users();
+        userId.setEmail(KeepRecord.getUsername());
+        faq.setUserId(userId);
         try {
-            Response res = api.uploadFaq(faq, Response.class, "21");
+            Response res = api.uploadFaq(faq, Response.class);
             String msg = res.readEntity(String.class);
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_ERROR, msg, null));
                 code = "";
                 question = "";
                 description = "";
+                return "ViewFaqs.jsf";
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, e.getMessage(), null));
+            return "";
         }
+        
 
     }
     

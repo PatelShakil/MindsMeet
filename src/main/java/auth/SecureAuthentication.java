@@ -52,76 +52,105 @@ public class SecureAuthentication implements HttpAuthenticationMechanism, Serial
 
     @Override
     public AuthenticationStatus validateRequest(HttpServletRequest request, HttpServletResponse response, HttpMessageContext ctx) throws AuthenticationException {
-        String token = extractToken(ctx);
-        System.out.println("Token : " + KeepRecord.getToken());
-        System.out.println("Rest Token : " + token);
-
-        if (request.getRequestURI().contains("user") && KeepRecord.getToken() == null) {
-            try {
-                //            ctx.responseUnauthorized();
-                System.out.println("auth.SecureAuthentication.validateRequest()");
-                request.getRequestDispatcher(Utils.APP_URL+"auth/login.jsf").forward(request, response);
-            } catch (ServletException ex) {
-                Logger.getLogger(SecureAuthentication.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(SecureAuthentication.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
-            return ctx.doNothing();
-        }
-        if (request.getRequestURI().contains("admin") && KeepRecord.getToken() == null) {
-            ctx.responseUnauthorized();
-            return ctx.doNothing();
-        }
-
         try {
+            String token = extractToken(ctx);
+            System.out.println("Token: " + KeepRecord.getToken());
 
-            if (token == null && lbean.getEmail() != null) {
-                String username = lbean.getEmail();
-                String password = lbean.getPassword();
-                Credential credential = new UsernamePasswordCredential(username, new Password(password));
-                result = handler.validate(credential);
-                if (result.getStatus() == Status.VALID) {
-                    createToken(result, ctx);
-
-                    ctx.notifyContainerAboutLogin(result);
-                    KeepRecord.setUsername(username);
-                    KeepRecord.setPassword(password);
-                    KeepRecord.setPrincipal(result.getCallerPrincipal());
-                    KeepRecord.setRoles(result.getCallerGroups());
-
-                    lbean.setRoles(result.getCallerGroups());
-                    return AuthenticationStatus.SUCCESS;
-
-                } else {
-                    lbean.setErrorstatus("User or Password is not correct !");
-                    lbean.setStatus(AuthenticationStatus.SEND_FAILURE);
-                    return AuthenticationStatus.SEND_FAILURE;
-                }
+            // Admin access validation
+            if (request.getRequestURI().contains("admin") && (KeepRecord.getToken() == null || !KeepRecord.getRoles().contains("Admin"))) {
+                return sendUnauthorized(ctx, "Unauthorized access to admin section.");
             }
-            if (KeepRecord.getToken() != null) {
-                Credential credential1 = new UsernamePasswordCredential(KeepRecord.getUsername(), new Password(KeepRecord.getPassword()));
-                result = handler.validate(credential1);
-                AuthenticationStatus status = createToken(result, ctx);
-                ctx.notifyContainerAboutLogin(KeepRecord.getPrincipal(), KeepRecord.getRoles());
-                return AuthenticationStatus.SUCCESS;
 
+            // User access validation
+            if (request.getRequestURI().contains("user") && KeepRecord.getToken() == null) {
+                forwardToLogin(request, response);
+                return ctx.doNothing();
+            }
+
+            // Token-based authentication
+            if (token != null) {
+                return validateToken(token, ctx);
+            }
+
+            // Credential-based authentication
+            if (KeepRecord.getToken() == null && lbean.getEmail() != null) {
+                return processCredentials(ctx);
+            }
+
+            // Revalidate existing credentials
+            if (KeepRecord.getToken() != null) {
+                return revalidateCredentials(ctx);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
+            Logger.getLogger(SecureAuthentication.class.getName()).log(Level.SEVERE, "Authentication error: {0}", e.getMessage());
         }
 
-        if (token != null) {
-            // validation of the jwt credential
-
-            return validateToken(token, ctx);
-        } else if (ctx.isProtected()) {
-            // A protected resource is a resource for which a constraint has been defined.
-            // if there are no credentials and the resource is protected, we response with unauthorized status
+        // Default response for protected resources
+        if (ctx.isProtected()) {
             return ctx.responseUnauthorized();
         }
+
         return ctx.doNothing();
+    }
+
+    private AuthenticationStatus processCredentials(HttpMessageContext ctx) {
+        try {
+            Credential credential = new UsernamePasswordCredential(lbean.getEmail(), new Password(lbean.getPassword()));
+            result = handler.validate(credential);
+            if (result.getStatus() == Status.VALID) {
+                KeepRecord.setUsername(lbean.getEmail());
+                KeepRecord.setPassword(lbean.getPassword());
+                KeepRecord.setPrincipal(result.getCallerPrincipal());
+                KeepRecord.setRoles(result.getCallerGroups());
+                lbean.setRoles(result.getCallerGroups());
+                return createToken(result, ctx);
+            } else {
+                lbean.setErrorstatus("Invalid username or password.");
+                return AuthenticationStatus.SEND_FAILURE;
+            }
+        } catch (Exception e) {
+            Logger.getLogger(SecureAuthentication.class.getName()).log(Level.SEVERE, "Credential processing error: {0}", e.getMessage());
+            return AuthenticationStatus.SEND_FAILURE;
+        }
+    }
+
+    private AuthenticationStatus revalidateCredentials(HttpMessageContext ctx) {
+        try {
+            Credential credential = new UsernamePasswordCredential(KeepRecord.getUsername(), new Password(KeepRecord.getPassword()));
+            result = handler.validate(credential);
+            if (result.getStatus() == Status.VALID) {
+                return createToken(result, ctx);
+            } else {
+                return ctx.responseUnauthorized();
+            }
+        } catch (Exception e) {
+            Logger.getLogger(SecureAuthentication.class.getName()).log(Level.SEVERE, "Revalidation error: {0}", e.getMessage());
+            return ctx.responseUnauthorized();
+        }
+    }
+
+    private void forwardToLogin(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            String loginPage = "/auth/login.jsf"; // Ensure the path is correct
+            Logger.getLogger(SecureAuthentication.class.getName()).log(Level.INFO, "Forwarding to login page: {0}", loginPage);
+
+            request.getRequestDispatcher(loginPage).forward(request, response);
+        } catch (ServletException | IOException ex) {
+            Logger.getLogger(SecureAuthentication.class.getName()).log(Level.SEVERE, "Error forwarding to login page: {0}", ex.getMessage());
+            try {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unable to forward to login page.");
+            } catch (IOException e) {
+                Logger.getLogger(SecureAuthentication.class.getName()).log(Level.SEVERE, "Error sending error response: {0}", e.getMessage());
+            }
+        }
+    }
+
+
+    private AuthenticationStatus sendUnauthorized(HttpMessageContext ctx, String message) {
+        Logger.getLogger(SecureAuthentication.class.getName()).log(Level.WARNING, message);
+        return ctx.responseUnauthorized();
     }
 
     private AuthenticationStatus validateToken(String token, HttpMessageContext context) {
@@ -155,7 +184,7 @@ public class SecureAuthentication implements HttpAuthenticationMechanism, Serial
             //context.getRequest().getSession().setAttribute("token", jwt);
             KeepRecord.setToken(jwt);
             context.getResponse().addHeader(AUTHORIZATION_HEADER, BEARER + jwt);
-            System.out.println("Token Value" + jwt);
+//            System.out.println("Token Value" + jwt);
 
             Cookie cookie = new Cookie("token", jwt);
             context.getResponse().addCookie(cookie);
@@ -176,7 +205,7 @@ public class SecureAuthentication implements HttpAuthenticationMechanism, Serial
         String authorizationHeader = context.getRequest().getHeader(AUTHORIZATION_HEADER);
         if (authorizationHeader != null && authorizationHeader.startsWith(BEARER)) {
             String token = authorizationHeader.substring(BEARER.length(), authorizationHeader.length());
-            System.out.println("JWTAuthenticationMechanism - Extract Tokens");
+//            System.out.println("JWTAuthenticationMechanism - Extract Tokens");
             return token;
         }
         return null;

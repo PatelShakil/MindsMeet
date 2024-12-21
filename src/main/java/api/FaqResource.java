@@ -65,52 +65,15 @@ public class FaqResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response answerFaq(FaqAnswers faq){
-        // Retrieve cookies and handle null case
-        Cookie[] cookiesArray = request.getCookies();
-        if (cookiesArray == null) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("No cookies found").build();
-        }
-
-        // Convert to list and find token
-        ArrayList<Cookie> cookies = new ArrayList<>(Arrays.asList(cookiesArray));
-        Optional<Cookie> tokenCookie = cookies.stream()
-                .filter(c -> c.getName().equals("token"))
-                .findFirst();
-
-        System.out.println("Username : " + KeepRecord.getUsername());
-
-        if (!tokenCookie.isPresent()) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("Token not found").build();
-        }
-
-        String token = tokenCookie.get().getValue();
-
-        // Get user credentials
-        JWTCredential cred = provider.getCredential(token);
-        if (cred == null || cred.getPrincipal() == null) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("Invalid token").build();
-        }
-
-        System.out.println("Principal : " + cred.getPrincipal());
-        Users user = ubl.getUserByEmail(cred.getPrincipal());
-        faq.setUserId(user);
-
         return fbl.answerFaq(faq);
     }
     
         
     @POST
-    @Path("faq/upload/{user_id}")
+    @Path("faq/upload")
     @Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
     @Consumes(javax.ws.rs.core.MediaType.APPLICATION_JSON)
-    public Response uploadFaq(FaqMst faq, @PathParam("user_id") Integer userId) {
-        Users user = ubl.getUser(userId).getObj();
-
-        faq.setUserId(user);
-
+    public Response uploadFaq(FaqMst faq) {
         return fbl.uploadFaq(faq);
     }
-
-
-    
 }

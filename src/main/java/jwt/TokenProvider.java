@@ -114,7 +114,7 @@ public class TokenProvider implements Serializable {
     public String createToken(String username, Set<String> authorities, Boolean rememberMe) {
         long now = (new Date()).getTime();
         long validity = rememberMe ? tokenValidityForRememberMe : tokenValidity;
-        System.out.println("TokenProvider - In create Token");
+//        System.out.println("TokenProvider - In create Token");
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuer("localhost")
@@ -131,7 +131,7 @@ public class TokenProvider implements Serializable {
                // .setSigningKey(mypublicKey)
                 .parseClaimsJws(token)
                 .getBody();
-        System.out.println("TokenProvider - Token Provider - In Get Credential");
+//        System.out.println("TokenProvider - Token Provider - In Get Credential");
         Set<String> authorities
                 = Arrays.asList(claims.get(AUTHORITIES_KEY).toString().split(","))
                         .stream()
@@ -142,7 +142,7 @@ public class TokenProvider implements Serializable {
 
     public boolean validateToken(String authToken) {
         try {
-            System.out.println("TokenProvider - TokenProvider - validate token " + authToken);
+//            System.out.println("TokenProvider - TokenProvider - validate token " + authToken);
             JWTCredential cred = getCredential(authToken);
             System.out.print(cred);
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(authToken);

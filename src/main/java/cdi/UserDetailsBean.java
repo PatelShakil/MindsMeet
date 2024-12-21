@@ -30,22 +30,23 @@ public class UserDetailsBean implements Serializable {
      */
     public UserDetailsBean() {
         api = new UserApi();
+        getUsername();
+    }
+
+    public Users getUser() {
         username = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("username");
         if (username != null) {
             try {
                 Response res = api.getUserByUsername(Response.class, username);
                 user = res.readEntity(Users.class);
                 user.setProfile(Utils.IMAGES_URL + user.getProfile());
-            }catch(Exception e){
+            } catch (Exception e) {
                 FacesContext.getCurrentInstance().addMessage("No User Found!!!", new FacesMessage("No User Found!!!"));
             }
-        }else{
+        } else {
             FacesContext.getCurrentInstance().addMessage("No User Found!!!", new FacesMessage("No User Found!!!"));
 
         }
-    }
-
-    public Users getUser() {
         return user;
     }
 

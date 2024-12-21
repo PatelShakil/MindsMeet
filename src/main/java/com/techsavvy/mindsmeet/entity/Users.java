@@ -4,6 +4,7 @@
      */
     package com.techsavvy.mindsmeet.entity;
 
+import com.nimbusds.jose.shaded.gson.annotations.JsonAdapter;
     import java.io.Serializable;
     import java.util.Collection;
     import java.util.Date;
@@ -266,6 +267,7 @@
             this.notesViewCollection = notesViewCollection;
         }
 
+        @JsonbTransient
         public Collection<FaqVotes> getFaqVotesCollection() {
             return faqVotesCollection;
         }
@@ -283,6 +285,7 @@
             this.noteRepliesCollection = noteRepliesCollection;
         }
 
+        @JsonbTransient
         public Collection<PostComments> getPostCommentsCollection() {
             return postCommentsCollection;
         }
@@ -300,6 +303,7 @@
             this.noteCommentsCollection = noteCommentsCollection;
         }
 
+        @JsonbTransient
         public Collection<MsgMst> getMsgMstCollection() {
             return msgMstCollection;
         }
@@ -308,6 +312,7 @@
             this.msgMstCollection = msgMstCollection;
         }
 
+        @JsonbTransient
         public Collection<MsgMst> getMsgMstCollection1() {
             return msgMstCollection1;
         }
@@ -316,6 +321,7 @@
             this.msgMstCollection1 = msgMstCollection1;
         }
 
+        @JsonbTransient
         public Collection<CommunityMst> getCommunityMstCollection() {
             return communityMstCollection;
         }
@@ -324,6 +330,7 @@
             this.communityMstCollection = communityMstCollection;
         }
 
+        @JsonbTransient
         public Collection<CommunityMembers> getCommunityMembersCollection() {
             return communityMembersCollection;
         }
@@ -332,6 +339,7 @@
             this.communityMembersCollection = communityMembersCollection;
         }
 
+        @JsonbTransient
         public Collection<CommunityReply> getCommunityReplyCollection() {
             return communityReplyCollection;
         }
@@ -348,6 +356,7 @@
             this.userSettings = userSettings;
         }
 
+        @JsonbTransient
         public Collection<FaqAnswers> getFaqAnswersCollection() {
             return faqAnswersCollection;
         }
@@ -356,6 +365,7 @@
             this.faqAnswersCollection = faqAnswersCollection;
         }
 
+        @JsonbTransient
         public Collection<PostLikes> getPostLikesCollection() {
             return postLikesCollection;
         }
@@ -364,6 +374,7 @@
             this.postLikesCollection = postLikesCollection;
         }
 
+        @JsonbTransient
         public Collection<PostFeedMst> getPostFeedMstCollection() {
             return postFeedMstCollection;
         }
@@ -372,6 +383,7 @@
             this.postFeedMstCollection = postFeedMstCollection;
         }
 
+        @JsonbTransient
         public Collection<CommunityMsg> getCommunityMsgCollection() {
             return communityMsgCollection;
         }

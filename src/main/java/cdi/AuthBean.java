@@ -12,9 +12,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.security.Principal;
 import java.util.Set;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.view.ViewScoped;
 import javax.faces.context.FacesContext;
@@ -42,7 +44,7 @@ import utils.Utils;
  * @author M.SHAKIL PATEL
  */
 @Named(value = "authBean")
-@RequestScoped
+@SessionScoped
 public class AuthBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -66,6 +68,8 @@ public class AuthBean implements Serializable {
 
     private UserApi api = new UserApi();
 
+    private UploadedFile uploadedFile;
+
     public String getIsrememberme() {
         return isrememberme;
     }
@@ -73,8 +77,30 @@ public class AuthBean implements Serializable {
     public void setIsrememberme(String isrememberme) {
         this.isrememberme = isrememberme;
     }
-    
-    
+
+    public SecurityContext getCtx() {
+        return ctx;
+    }
+
+    public void setCtx(SecurityContext ctx) {
+        this.ctx = ctx;
+    }
+
+    public UserApi getApi() {
+        return api;
+    }
+
+    public void setApi(UserApi api) {
+        this.api = api;
+    }
+
+    public UploadedFile getUploadedFile() {
+        return uploadedFile;
+    }
+
+    public void setUploadedFile(UploadedFile uploadedFile) {
+        this.uploadedFile = uploadedFile;
+    }
 
     public AuthenticationStatus getStatus() {
         return status;
@@ -132,20 +158,20 @@ public class AuthBean implements Serializable {
         return uploadedFilePath;
     }
 
-    public void handleFileUpload(FileUploadEvent event) {
-        UploadedFile uploadedFile = event.getFile();
+    public String handleFileUpload(FileUploadEvent event) {
+        uploadedFile = event.getFile();
 
         if (uploadedFile == null) {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Upload failed: File is null", null));
-            return;
+            return "register.jsf";
         }
 
         try {
             String resourcesFolderPath = Utils.IMAGES_PATH;
             System.out.println("Resource path: " + resourcesFolderPath);
 
-            String sanitizedFileName = Utils.getFormattedDate("ddMMMyyyyhhmmssa") + "_" + uploadedFile.getFileName().replaceAll(" ","_").replaceAll("[<>:\"/\\\\|?*]", "_");
+            String sanitizedFileName = Utils.getFormattedDate("ddMMMyyyyhhmmssa") + "_" + uploadedFile.getFileName().replaceAll(" ", "_").replaceAll("[<>:\"/\\\\|?*]", "_");
             File targetFile = new File(resourcesFolderPath, sanitizedFileName);
 
             if (!targetFile.exists()) {
@@ -175,6 +201,7 @@ public class AuthBean implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Upload failed: " + e.getMessage(), null));
         }
+        return "register.jsf";
     }
 
     public String getEmail() {
@@ -202,101 +229,142 @@ public class AuthBean implements Serializable {
         this.password = password;
     }
 
-    public String onRegister() {
-        Users user = new Users();
-        user.setEmail(email);
-        user.setPassword(password);
-        user.setName(name);
-        user.setUsername(username);
-        user.setPhone(phone);
-        System.out.println(this.uploadedFilePath);
-        user.setProfile(getUploadedFilePath());
+public String onRegister() {
+    Users user = new Users();
+    user.setEmail(email);
+    user.setPassword(password);
+    user.setName(name);
+    user.setUsername(username);
+    user.setPhone(phone);
+    user.setProfile(getUploadedFilePath()); // Ensure this returns a valid, sanitized path
 
-        try {
-            // Perform the login call
-            Response response = api.doSignup(user, Response.class);
-            Resource<Users> res = response.readEntity(new GenericType<Resource<Users>>(){});
-            api.close();
+    try {
+        // Perform the registration API call
+        Response res = api.doSignup(user, Response.class);
+        api.close();
 
-            // Simulate checking the response (update this with your actual response check logic)
-            if (res != null && res.getStatus()) {
-                System.out.println(res.getMessage());
-                // Add a success message
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_INFO, "Registration Successful", "Welcome back!"));
-                setCookie("user_id", res.getObj().getId().toString(), 30);
-                return "/";
-            } else {
-                System.out.println(res.getMessage());
-//                 Add an error message for failed login
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Registration Failed", "Invalid credentials."));
-                return "/auth/register.jsf";
-            }
-        } catch (Exception e) {
-            api.close();
-            e.printStackTrace();
-            // Add an error message for exceptions
+        // Check if the registration was successful
+        if (res == null || res.getStatus() == 200) {
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "An unexpected error occurred: " + e.getMessage()));
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Registration Failed", "Unable to register user. Please try again."));
             return "/auth/register.jsf";
         }
+
+        // Perform automatic login
+        Credential credential = new UsernamePasswordCredential(email, new Password(password));
+        HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+        HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+        status = ctx.authenticate(request, response, withParams().credential(credential));
+
+        if (status == AuthenticationStatus.SUCCESS) {
+            roles = ctx.isCallerInRole("Admin") ? Set.of("Admin") : Set.of("User");
+
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Registration Successful", "Welcome back!"));
+
+            // Redirect based on role
+            if (roles.contains("Admin")) {
+                return "/admin/index.jsf";
+            } else if (roles.contains("User")) {
+                return "/user/index.jsf";
+            }
+        }
+
+        // Handle failed authentication after registration
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Login Failed", "Unable to log in after registration. Please log in manually."));
+        return "/auth/login.jsf";
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "An unexpected error occurred: " + e.getMessage()));
+        return "/auth/register.jsf";
+    } finally {
+        if (api != null) {
+            api.close();
+        }
     }
+}
+
 
 //    }
-    public String onLogin() {
-        Users user = new Users();
-        user.setEmail(email);
-        user.setPassword(password);
+public String onLogin() {
+        if (email == null || email.isEmpty() || password == null || password.isEmpty()) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Email and Password must not be empty"));
+            return "/auth/login.jsf";
+        }
 
         try {
+            System.out.println("Attempting login with email: " + email);
 
             Credential credential = new UsernamePasswordCredential(email, new Password(password));
             HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
             HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
 
             status = ctx.authenticate(request, response, withParams().credential(credential));
+            System.out.println("Authentication Status: " + status);
 
-          
             if (status == AuthenticationStatus.SUCCESS) {
+                Principal principal = ctx.getCallerPrincipal();
+                System.out.println("Principal: " + principal);
+
+                roles = ctx.isCallerInRole("Admin") ? Set.of("Admin") : Set.of("User");
+                System.out.println("Roles: " + roles);
+
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_INFO, "Login Successful", "Welcome back!"));
-                System.out.print(roles);
-                System.out.println("User : " + ctx.getCallerPrincipal().getName());
 
                 if (roles.contains("Admin")) {
-                    return "/admin";
-                } else if (roles.contains("User")) {
-                    System.out.println("cdi.AuthBean.onLogin()");
+                    username = "";
+                    password = "";
+                    return "/admin/index.jsf";
+                } else if (roles.contains("User")) {                  
+                    username = "";
+                    password = "";
                     return "/user/index.jsf";
-                }else{
+                } else {
                     return "/auth/login.jsf";
                 }
-
-            } else {
+            } else if (status == AuthenticationStatus.SEND_FAILURE) {
+                System.out.println("Authentication failed. Invalid credentials.");
+                request.getSession().invalidate(); // Invalidate session
+                logout();
                 FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Login Failed", status.name()));
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Login Failed", "Invalid Credentials! Please try again."));
                 return "/auth/login.jsf";
             }
+
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Login Failed", "Unexpected error. Please try again."));
+            return "/auth/login.jsf";
+
         } catch (Exception e) {
-            api.close();
             e.printStackTrace();
-            // Add an error message for exceptions
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "An unexpected error occurred: " + e.getMessage()));
+            return "/auth/login.jsf";
+        } finally {
+            if (api != null) {
+                api.close();
+            }
         }
-        return "/auth/login.jsf";
     }
-    
-    public String logout(){
+
+
+
+    public String logout() {
         try {
             HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+            request.getSession().invalidate();
             request.logout();
             KeepRecord.reset();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
         return "/auth/login.jsf";
     }
 

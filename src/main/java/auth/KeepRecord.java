@@ -17,8 +17,7 @@ import javax.security.enterprise.identitystore.CredentialValidationResult;
  *
  * @author root
  */
-@Named
-@SessionScoped
+
 public class KeepRecord implements Serializable {
 
     private static CredentialValidationResult result;

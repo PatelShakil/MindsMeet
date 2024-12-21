@@ -5,8 +5,10 @@
 package cdi.notes;
 
 import api.UserApi;
+import cdi.faq.FaqDetailBean;
 import com.techsavvy.mindsmeet.entity.Notes;
 import com.techsavvy.mindsmeet.entity.NotesText;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
@@ -15,6 +17,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
@@ -108,6 +112,12 @@ public class NoteDetailBean implements Serializable {
                 this.totalPages = textPages.size();
             } catch (Exception e) {
                 e.printStackTrace(); // Log or handle errors as needed
+            }
+        }else {
+            try {
+                FacesContext.getCurrentInstance().getExternalContext().redirect("ViewNotes.jsf");
+            } catch (IOException ex) {
+                Logger.getLogger(FaqDetailBean.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

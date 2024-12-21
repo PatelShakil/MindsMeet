@@ -1,17 +1,85 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <head>
+        <title>Chat | MindsMeet</title>
+    </head>
 
     <body>
-
         <ui:composition template="./../Master.xhtml">
-
             <ui:define name="content">
-                Chat
+                <h:form id="chatForm">
+                    <input id="senderId" value="#{chat.sender.id}" type="hidden" />
+                    <div class="grid grid-cols-4 max-h-[80vh]">
+
+                        <!-- Users List Section -->
+                        <div id="usersList" class="col-span-1 pb-32 flex flex-col bg-gray-200 max-h-[80vh] overflow-x-clip overflow-y-auto [&amp;::-webkit-scrollbar]:w-1
+                             [&amp;::-webkit-scrollbar-track]:bg-gray-300
+                             [&amp;::-webkit-scrollbar-thumb]:bg-gray-400
+                             dark:[&amp;::-webkit-scrollbar-track]:bg-gray-300
+                             dark:[&amp;::-webkit-scrollbar-thumb]:bg-gray-400">
+                            <!-- Search Box -->
+                            <p:inputText id="searchBox" value="#{chat.searchText}" placeholder="Search..." class="p-2 m-2 border rounded">
+                                <p:ajax event="keyup" process="@this" listener="#{chat.onSearch}" update=":usersList" />
+                            </p:inputText>
+
+                            <!-- User List -->
+                            <ui:repeat value="#{chat.users}" var="user">
+                                <div onclick="openChat(#{user.id}, '#{user.name}')"
+                                     class="user-item flex border  border-gray-300 rounded-md p-2 m-1 bg-white hover:bg-green-100 cursor-pointer"
+                                     id="user_#{user.id}">
+                                    <h:graphicImage value="#{utility.IMAGES_PATH}#{user.profile}"
+                                                    class="h-12 w-12 rounded-full user-profile_#{user.profile}" />
+                                    <div class="flex pl-2 flex-col">
+                                    <h3 class="font-medium">#{user.name}</h3>
+                                    <p class="text-gray-500 text-sm">@#{user.username}</p>
+                                    </div>
+                                </div>
+                            </ui:repeat>
+                        </div>
+
+                        <!-- Chat Section -->
+                        <div style="background:url('https://www.toptal.com/designers/subtlepatterns/uploads/more-leaves.png');" 
+                             class="col-span-3 flex flex-col bg-white max-h-[80vh]">
+                            <!-- Chat Header -->
+                            <div class="flex items-center p-4 bg-gray-100 border-b shadow-md">
+                                <h3 id="receiverName" class="font-medium text-lg"></h3>
+                            </div>
+                            
+                            <div id="selectError" class="text-center flex flex-col items-center justify-center h-[60vh] ">
+                                <img src="https://static.vecteezy.com/system/resources/thumbnails/012/042/301/small/warning-sign-icon-transparent-background-free-png.png" alt="Error" />
+                                <p  class="text-2xl text-red-600 rounded-md bg-white p-4 ">Please Select User To Start Communication</p>
+                            </div>
+
+                            <!-- Chat Messages Area -->
+                            <div id="messageArea" class="flex-grow overflow-y-auto p-4 [&amp;::-webkit-scrollbar]:w-1
+                             [&amp;::-webkit-scrollbar-track]:bg-gray-300
+                             [&amp;::-webkit-scrollbar-thumb]:bg-gray-400
+                             dark:[&amp;::-webkit-scrollbar-track]:bg-gray-300
+                             dark:[&amp;::-webkit-scrollbar-thumb]:bg-gray-400">
+                                <!-- Messages dynamically loaded here -->
+                            </div>
+
+                            <!-- Chat Input Area -->
+                            <div class="flex items-center p-4 bg-gray-100 border-t">
+                                <input type="text" id="messageInput" class="flex-grow p-2 border rounded-md mr-2" placeholder="Type a message..." />
+                                <button type="button" onclick="sendMsg();" id="sendButton" 
+                                        class="p-2 bg-green-600 text-white rounded-md hover:bg-blue-600 transition">
+                                    Send
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        console.log($(".user-profile_null").val());
+                        
+                    </script>
+                    <script src="#{utility.APP_PATH}resources/js/ChatClient.js"></script>
+                </h:form>
             </ui:define>
-
         </ui:composition>
-
     </body>
 </html>

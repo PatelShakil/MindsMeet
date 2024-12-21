@@ -7,6 +7,7 @@ package com.techsavvy.mindsmeet.entity;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -68,16 +69,8 @@ public class CommunityMsg implements Serializable {
     private Users userId;
 
     public CommunityMsg() {
-    }
-
-    public CommunityMsg(Integer id) {
-        this.id = id;
-    }
-
-    public CommunityMsg(Integer id, Date createdAt, Date updatedAt) {
-        this.id = id;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.createdAt = createdAt != null ? createdAt : new Date();
+        this.updatedAt = updatedAt != null ? updatedAt : new Date();
     }
 
     public Integer getId() {
@@ -111,7 +104,10 @@ public class CommunityMsg implements Serializable {
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
+    
+    
 
+    @JsonbTransient
     public Collection<CommunityReply> getCommunityReplyCollection() {
         return communityReplyCollection;
     }

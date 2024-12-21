@@ -64,16 +64,8 @@ public class CommunityReply implements Serializable {
     private Users userId;
 
     public CommunityReply() {
-    }
-
-    public CommunityReply(Integer id) {
-        this.id = id;
-    }
-
-    public CommunityReply(Integer id, Date createdAt, Date updatedAt) {
-        this.id = id;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.createdAt = createdAt != null ? createdAt : new Date();
+        this.updatedAt = updatedAt != null ? updatedAt : new Date();
     }
 
     public Integer getId() {

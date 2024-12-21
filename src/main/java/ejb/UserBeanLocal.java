@@ -63,41 +63,7 @@ public interface UserBeanLocal {
     
     public Response getNoteById(Integer id);
     
-
-    //posts
-    public Response viewPosts();
-    
-    public void doPost(PostFeedMst pfm);
-
-    public void likeOnPost(Integer postId, Integer userId);
-    
-    public void doCommentOnPost(PostComments pc);
-    
-    public void deletePost(Integer pId);
-    
-    //community
-    public void joinCommunity(Integer cId, Integer userId);
-
-    public void createCommunity(CommunityMst cm);
-
-    public void leftCommunity(Integer cId, Integer userId);
-
-    public void removeMemberToCommunity(Integer cmId,Integer cId);
-    
-    public void deleteCommunity(Integer cId);
-
-    public void postMsgInCommunity(CommunityMsg cms);
-
-    public void replyToCommunityMsg(CommunityReply cr);
-    
-    public void addMemberToCommunity(CommunityMembers cm);
-    
-    public Response loadCommunityMsg(Integer cId);
-
-    //chat
-    public Resource<Collection<MsgMst>> getAllMsg(Integer rId,Integer sId);
-    
-    public void sendMsg(MsgMst msg);
+    public Collection<Notes> getNotesForUsers(String email);
 
     public Response getNoteComment(Integer commentId);
 

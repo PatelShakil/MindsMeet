@@ -6,6 +6,8 @@ package ejb;
 
 import com.techsavvy.mindsmeet.entity.FaqAnswers;
 import com.techsavvy.mindsmeet.entity.FaqMst;
+import com.techsavvy.mindsmeet.entity.Notes;
+import java.util.Collection;
 import javax.ejb.Local;
 import javax.ws.rs.core.Response;
 
@@ -30,4 +32,9 @@ public interface FaqBeanLocal {
     public Response deleteFaq(Integer fId);
 
     public Response getFaqById(Integer id);
+    
+    public Collection<FaqMst> getFaqsForUsers(String email);
+    
+    public Collection<FaqAnswers> getFaqAnswers(Integer id);
+
 }

@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Collection;
 import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
@@ -40,6 +41,7 @@ public class UploadNotesBean implements Serializable{
     private String file;
     private Collection<NotesText> textList;
     
+    private UploadedFile uploadedFile;
     /**
      * Creates a new instance of UploadNotesBean
      */
@@ -47,6 +49,24 @@ public class UploadNotesBean implements Serializable{
     }
     
     private final UserApi api = new UserApi();
+
+    public Collection<NotesText> getTextList() {
+        return textList;
+    }
+
+    public void setTextList(Collection<NotesText> textList) {
+        this.textList = textList;
+    }
+
+    public UploadedFile getUploadedFile() {
+        return uploadedFile;
+    }
+
+    public void setUploadedFile(UploadedFile uploadedFile) {
+        this.uploadedFile = uploadedFile;
+    }
+    
+    
 
     public String getTitle() {
         return title;
@@ -80,26 +100,24 @@ public class UploadNotesBean implements Serializable{
         this.file = file;
     }
     
-    public void handleFileUpload(FileUploadEvent event) {
-        UploadedFile uploadedFile = event.getFile();
+    public String upload(FileUploadEvent event){
+        uploadedFile = event.getFile();
+        System.out.println(uploadedFile.getFileName());
 
         if (uploadedFile == null) {
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Upload failed: File is null", null));
-            return;
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "No file uploaded!", null));
+            return "";
         }
 
         try {
             String resourcesFolderPath = Utils.PDF_PATH;
-            System.out.println("Resource path: " + resourcesFolderPath);
-
-            String sanitizedFileName = Utils.getFormattedDate("ddMMMyyyyhhmmssa") + "_" + uploadedFile.getFileName().replaceAll("[<>:\"/\\\\|?*]", "_");
+            String sanitizedFileName = Utils.getFormattedDate("ddMMMyyyyhhmmssa") + "_"
+                    + uploadedFile.getFileName().replaceAll(" ", "").replaceAll("[<>:\"/\\\\|?*]", "_");
             File targetFile = new File(resourcesFolderPath, sanitizedFileName);
 
-            if (!targetFile.exists()) {
-                if (!targetFile.createNewFile()) {
-                    throw new IOException("File could not be created");
-                }
+            if (!targetFile.getParentFile().exists()) {
+                targetFile.getParentFile().mkdirs();
             }
 
             try (InputStream input = uploadedFile.getInputStream(); FileOutputStream output = new FileOutputStream(targetFile)) {
@@ -110,34 +128,47 @@ public class UploadNotesBean implements Serializable{
                 }
             }
 
-            // Store the uploaded file path for display
             file = targetFile.getName();
-            textList = Utils.getTextFromPdf(Utils.PDF_URL + file);
+            textList = Utils.getTextFromPdf(Utils.PDF_PATH + file);
+
         } catch (IOException e) {
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Upload failed: " + e.getMessage(), null));
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "File upload failed: " + e.getMessage(), null));
+            e.printStackTrace();
         }
+        return "";
     }
-    
-    public void submit(){
-         Notes note = new Notes();
+
+    public String submit() {
+        if(file == null){
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "File upload failed " , null));
+
+            return "";
+        }
+            Notes note = new Notes();
             note.setTitle(title);
             note.setDescription(description);
             note.setFile(file);
             note.setNotesTextCollection(textList);
             note.setIsPublic(isPublic);
+
             Users user = new Users();
             user.setEmail(KeepRecord.getUsername());
             note.setUserId(user);
+
             Response res = api.uploadNote(note, Response.class);
-            
-            if(res.getStatus() == 200){
+            String message = res.readEntity(String.class);
+
+            if (res.getStatus() == 200) {
                 FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_INFO,res.readEntity(String.class) , null));
-            }else{
+                        new FacesMessage(FacesMessage.SEVERITY_INFO, message, null));
+            } else {
                 FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_INFO, res.readEntity(String.class), null));
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, message, null));
             }
+
+        return "ViewNotes.jsf"; // Stay on the same page
     }
 
     

@@ -55,16 +55,8 @@ public class CommunityMembers implements Serializable {
     private CommunityMst communityId;
 
     public CommunityMembers() {
-    }
-
-    public CommunityMembers(Integer id) {
-        this.id = id;
-    }
-
-    public CommunityMembers(Integer id, Date createdAt, Date updatedAt) {
-        this.id = id;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.createdAt = createdAt != null ? createdAt : new Date();
+        this.updatedAt = updatedAt != null ? updatedAt : new Date();
     }
 
     public Integer getId() {

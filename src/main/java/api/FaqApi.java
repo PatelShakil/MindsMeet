@@ -47,8 +47,8 @@ public class FaqApi {
         return webTarget.path("answer").request(javax.ws.rs.core.MediaType.APPLICATION_JSON).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_JSON), responseType);
     }
 
-    public <T> T uploadFaq(Object requestEntity, Class<T> responseType, String user_id) throws ClientErrorException {
-        return webTarget.path(java.text.MessageFormat.format("faq/upload/{0}", new Object[]{user_id})).request(javax.ws.rs.core.MediaType.APPLICATION_JSON).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_JSON), responseType);
+    public <T> T uploadFaq(Object requestEntity, Class<T> responseType) throws ClientErrorException {
+        return webTarget.path("faq/upload").request(javax.ws.rs.core.MediaType.APPLICATION_JSON).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_JSON), responseType);
     }
 
     public void close() {

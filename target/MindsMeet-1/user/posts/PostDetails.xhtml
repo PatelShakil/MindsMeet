@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <body>
+
+        <ui:composition template="./../Master.xhtml">
+
+            <ui:define name="content">
+                <div class="bg-white pb-10 mx-auto max-w-screen-lg rounded-lg border border-2 border-green-200 p-2 flex flex-col shadow-md shadow-green-500/50 hover:shadow-[30px] hover:shadow-green-500/100">
+                    <div class="flex py-2 items-center justify-between gap-2">
+                        <div class="flex gap-2">
+                            <p:graphicImage value="#{utility.IMAGES_PATH}#{postDetail.pfm.userId.profile}"
+                                            class="h-14 w-14 rounded-full border border-1 border-gray-700" />
+                            <div class="flex flex-col">
+                                <h2 class="font-bold text-xl mb-1 text-gray-800">#{postDetail.pfm.userId.name}</h2>
+                                <p class="font-medium text-md">#{postDetail.pfm.location} </p>
+                            </div>
+                        </div>
+                        <p class="text-mute text-sm text-end">#{postDetail.pfm.createdAt}</p>
+                    </div>
+                    <p:graphicImage
+                        value="#{utility.IMAGES_PATH}#{postDetail.pfm.photo}"
+                        class="rounded-lg mb-2 "
+                        style="max-width: 100%; /* Make the image width responsive */
+                        height: auto;    /* Maintain aspect ratio */
+                        max-height: 500px; /* Limit the height to avoid covering the screen */
+                        object-fit: contain; /* Ensure the image fits well without distortion */
+                        "/>
+                    <p class="text-md font-semibold mb-2">#{postDetail.pfm.caption}</p>
+                    <h:form class="flex flex-col">
+                        <div class="flex justify-between items-center">
+                        <p:commandButton
+                            action="#{postDetail.doLike()}"
+                            styleClass="bg-transparent border-none text-red-500 hover:text-red-700"
+                            icon="#{postDetail.isPostLiked() ? 'pi pi-heart-fill' : 'pi pi-heart'}"
+                            oncomplete="window.location.reload();"
+                            value="#{postDetail.getLikesCount()} Likes"
+                            />
+
+                        <div class="bg-green-500 px-3 py-2 text-white cursor-pointer rounded-md shadow-sm hover:bg-green-600" id="add-comment">
+                            Add Comment
+                        </div>
+                        </div>                    
+                    </h:form>
+
+                    <h:form>
+                        <div id="comment-form" class="hidden">
+                        <div  class="flex justify-between my-2 gap-2">
+                            <p:inputText id="comment" value="#{postDetail.comment}" required="true" 
+                                         placeholder="Enter the Comment..."
+                                         class="p-inputtext w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                            <p:commandButton value="Post" action="#{postDetail.doComment()}"
+                                             oncomplete="window.location.reload();"/>
+                        </div>
+                        </div>
+                    </h:form>
+                </div>
+                <div class="bg-white pb-10 mt-4 mx-auto max-w-screen-lg rounded-lg border border-2 border-green-200 p-2 flex flex-col shadow-md shadow-green-500/50 hover:shadow-[30px] hover:shadow-green-500/100">
+                    <h3 class="text-2xl ml-1 font-bold">Comments</h3>
+                    <hr class="my-1"/>
+                    <ui:repeat value="#{postDetail.comments}" var="com">
+                        <div class="bg-gray-100 m-1 p-2 rounded-md">
+                            <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-3">
+                                <img 
+                                    src="${utility.IMAGES_PATH}${com.userId.profile}" 
+                                    alt="User Profile" 
+                                    class="h-10 w-10 rounded-full border border-gray-300" />
+                                <h6 class="text-gray-800  font-semibold">
+                                            #{com.userId.username}
+                                </h6>
+                            </div>
+                                <p class="text-mute text-sm">#{com.createdAt}</p>
+                            </div>
+                            <p class="ml-12 p-2 bg-gray-200 rounded-md">#{com.text}</p>
+                        </div>
+                        
+                    </ui:repeat>
+                    
+                </div>
+                
+                
+                <script>
+                    $("#add-comment").on("click",()=>{
+                        $("#comment-form").toggleClass("hidden");
+                    });
+                    </script>
+                
+                
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

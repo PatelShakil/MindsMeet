@@ -7,6 +7,7 @@ package com.techsavvy.mindsmeet.entity;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -49,7 +50,6 @@ public class PostFeedMst implements Serializable {
     @Size(max = 255)
     @Column(name = "photo")
     private String photo;
-    @Lob
     @Size(max = 65535)
     @Column(name = "caption")
     private String caption;
@@ -74,17 +74,10 @@ public class PostFeedMst implements Serializable {
     @ManyToOne
     private Users userId;
 
+
     public PostFeedMst() {
-    }
-
-    public PostFeedMst(Integer id) {
-        this.id = id;
-    }
-
-    public PostFeedMst(Integer id, Date createdAt, Date updatedAt) {
-        this.id = id;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.createdAt = createdAt == null ? new Date() : createdAt;
+        this.updatedAt = updatedAt == null ? new Date() : updatedAt;
     }
 
     public Integer getId() {
@@ -135,6 +128,7 @@ public class PostFeedMst implements Serializable {
         this.updatedAt = updatedAt;
     }
 
+    @JsonbTransient
     public Collection<PostComments> getPostCommentsCollection() {
         return postCommentsCollection;
     }
@@ -143,6 +137,7 @@ public class PostFeedMst implements Serializable {
         this.postCommentsCollection = postCommentsCollection;
     }
 
+    
     public Collection<PostLikes> getPostLikesCollection() {
         return postLikesCollection;
     }

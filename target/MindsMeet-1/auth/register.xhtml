@@ -2,55 +2,104 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <title>Register | MindsMeet</title>
         <script src="https://cdn.tailwindcss.com"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <style>
-            @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display;');
-            *{
+            @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&amp;display=swap');
+            * {
                 margin: 0;
                 padding: 0;
                 box-sizing: border-box;
                 font-family: "Poppins", sans-serif;
             }
-        </style> 
+            .input-label {
+                display: block;
+                margin-bottom: 0.5rem;
+                font-weight: 500;
+                color: #f5f5f5;
+            }
+            .dark .input-label {
+                color: #f5f5f5;
+            }
+        </style>
     </h:head>
     <h:body>
-        <h:form class="flex flex-col lg:m-20 m-10 gap-y-5">
-            <!--<p:messages closable="true" />-->
-            <p:messages closable="true" showDetail="true" showSummary="true"  />
+        <section class="bg-gray-50 dark:bg-gray-900 min-h-screen flex items-center justify-center p-4 md:p-0">
+            <div class="w-full max-w-2xl bg-white rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700">
+                <div class="p-6 space-y-6 sm:p-8">
+                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white text-center">
+                        Create Your Account
+                    </h1>
+                    <h:form class="space-y-4">
+                        <p:messages closable="true" showDetail="true" showSummary="true" />
 
-            <div class="flex gap-x-5 items-center">
-                <p>Your Profile Image</p>
-            <p:fileUpload 
-                          listener="#{authBean.handleFileUpload}"
-                          mode="simple"
-                          dragDropSupport="true"
-                          auto="true"
-                          label="Upload Profile"
-                          update="imagePanel"
-                          class=""
-                          oncomplete="PF('imagePanel1').show();"
-                          uploadButtonTitle="Choose Profile"
-                          />
+                        <!-- Profile Image Upload -->
+                        <div class="flex flex-col">
+                            <label class="input-label">Profile Image</label>
+                            <p:fileUpload 
+                                listener="#{authBean.handleFileUpload}"
+                                mode="advanced"
+                                auto="true"
+                                accept=".jpg,.png,.jpeg" 
+                                dragDropSupport="true"
+                                label="Choose File"
+                                update="imagePreview"
+                                class="p-fileupload w-full border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                            >
+                            </p:fileUpload>
+                        </div>
+
+                        <!-- Image Preview -->
+                        <h:panelGroup id="imagePreview">
+                            <label class="input-label">Preview</label>  
+                            <p:graphicImage id="image" value="#{authBean.profilePath}?#{System.currentTimeMillis()}" 
+                                            alt="Profile Preview" 
+                                            class="w-32 h-32 rounded-full border border-2 border-solid shadow-md" />
+                        </h:panelGroup>
+
+                        <!-- Input Fields -->
+                        <div>
+                            <label class="input-label">Name</label>
+                            <p:inputText value="#{authBean.name}" placeholder="Full name" required="true" class="w-full p-2 border rounded-lg focus:ring-green-500 focus:border-green-500" />
+                        </div>
+
+                        <div>
+                            <label class="input-label">Username</label>
+                            <p:inputText value="#{authBean.username}" placeholder="Username" required="true" class="w-full p-2 border rounded-lg focus:ring-green-500 focus:border-green-500" />
+                        </div>
+
+                        <div>
+                            <label class="input-label">Phone</label>
+                            <p:inputText value="#{authBean.phone}" placeholder="Phone number" required="true" class="w-full p-2 border rounded-lg focus:ring-green-500 focus:border-green-500" />
+                        </div>
+
+                        <div>
+                            <label class="input-label">Email</label>
+                            <p:inputText value="#{authBean.email}" type="email" placeholder="Email" required="true" class="w-full p-2 border rounded-lg focus:ring-green-500 focus:border-green-500" />
+                        </div>
+
+                        <div>
+                            <label class="input-label">Password</label>
+                            <p:password value="#{authBean.password}" placeholder="Password" required="true" class="w-full p-2 border rounded-lg focus:ring-green-500 focus:border-green-500" />
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div>
+                            <h:commandButton value="Sign Up" action="#{authBean.onRegister}" class="w-full py-2.5 px-5 text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium text-sm text-center" />
+                        </div>
+                    </h:form>
+
+                    <!-- Redirect to Login -->
+                    <p class="text-sm text-gray-500 text-center dark:text-gray-400">
+                        Already have an account?
+                        <a href="login.jsf" class="text-green-600 hover:underline dark:text-green-400">Login here</a>
+                    </p>
+                </div>
             </div>
-            <h:panelGroup id="imagePanel" >
-                <h:outputText value="Uploaded Profile"/>
-                <p:graphicImage id="imagePanel1" value="#{authBean.profilePath}" alt="#{authBean.profilePath}"
-                                width="300px"
-                                /> 
-
-            </h:panelGroup>
-            <p:inputText type="name" value="#{authBean.name}" placeholder="Enter your Name" required="true" /><!-- comment -->
-            <p:inputText type="name" value="#{authBean.username}" placeholder="Enter your Username" required="true" /><!-- comment -->
-            <p:inputText type="tel" value="#{authBean.phone}" placeholder="Enter your Phone" required="true" label="Phone"/>
-            <p:inputText type="email" placeholder="Enter Your Email" required='true' value='#{authBean.email}' />
-            <p:inputText type="password" placeholder="Enter Your Password" required='true' value='#{authBean.password}'/>
-            <h:commandButton type="submit" value="Signup" class=" p-2 py-2 bg-green-500 rounded" action='#{authBean.onRegister}' />       
-        </h:form>
-        <p class="text-center">Already have an Account ? <p:link href="login.jsf">Login</p:link></p>
-
-        
+        </section>
     </h:body>
 </html>

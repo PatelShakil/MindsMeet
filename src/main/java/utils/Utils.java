@@ -5,6 +5,7 @@
 package utils;
 
 import com.techsavvy.mindsmeet.entity.NotesText;
+import java.io.File;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -42,9 +43,9 @@ public class Utils {
     public static Collection<NotesText> getTextFromPdf(String file) {
         Collection<NotesText> doc = new ArrayList<>();
         try {
-//            PDDocument document = PDDocument.load(new File(""+file));
-            URL url = new URL(file);
-            PDDocument document = PDDocument.load(url.openStream());
+            PDDocument document = PDDocument.load(new File(file));
+//            URL url = new URL(file);
+//            PDDocument document = PDDocument.load(url.openStream());
             PDFTextStripper stripper = new PDFTextStripper();
 
             for (int page = 1; page <= document.getNumberOfPages(); ++page) {
@@ -52,12 +53,13 @@ public class Utils {
                 stripper.setEndPage(page);
 
                 String text = stripper.getText(document);
-                System.out.println("Page " + page + ":\n" + text);
+//                System.out.println("Page " + page + ":\n" + text);
                 NotesText note = new NotesText();
                 note.setContent(text);
                 note.setPageNo(page);
                 doc.add(note);
             }
+            document.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

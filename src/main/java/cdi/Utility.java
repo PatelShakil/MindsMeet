@@ -24,7 +24,26 @@ public class Utility {
     
     private String token = KeepRecord.getToken();
     
-    private String APP_PATH = "http://localhost:8080/MindsMeet/";
+    private String APP_PATH = Utils.APP_URL;
+    private String IMAGES_PATH = Utils.IMAGES_URL;
+
+    public UserBeanLocal getUbl() {
+        return ubl;
+    }
+
+    public void setUbl(UserBeanLocal ubl) {
+        this.ubl = ubl;
+    }
+
+    public String getIMAGES_PATH() {
+        return IMAGES_PATH;
+    }
+
+    public void setIMAGES_PATH(String IMAGES_PATH) {
+        this.IMAGES_PATH = IMAGES_PATH;
+    }
+    
+    
     
     private String username = KeepRecord.getUsername();
     

@@ -29,7 +29,7 @@ import javax.ws.rs.ext.Provider;
  */
 //@Secured
 
-@WebFilter(filterName = "AuthenticationFilter", urlPatterns = { "/api/*" })
+//@WebFilter(filterName = "AuthenticationFilter", urlPatterns = { "/api/*" })
 @Provider
 @PreMatching
 public class MyRestFilter implements ClientRequestFilter {
@@ -47,9 +47,9 @@ public class MyRestFilter implements ClientRequestFilter {
              System.out.println(" In form Auth Client Filter "+ mytoken);
       
        
-           requestContext.getHeaders().add(HttpHeaders.AUTHORIZATION,"Bearer "+ KeepRecord.getToken());
+            requestContext.getHeaders().add(HttpHeaders.AUTHORIZATION,"Bearer "+ KeepRecord.getToken());
       
-      System.out.println(" After cookie header Auth Client Filter "+ mytoken);
+            System.out.println(" After cookie header Auth Client Filter "+ mytoken);
    
     }
 

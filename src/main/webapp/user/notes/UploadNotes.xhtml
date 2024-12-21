@@ -6,13 +6,12 @@
       xmlns:p="http://primefaces.org/ui">
 
     <body>
-
         <ui:composition template="./../Master.xhtml">
-
             <ui:define name="content">
-                <h:form enctype="multipart/form-data" class="max-w-lg mx-auto p-4 bg-white shadow-lg rounded-lg space-y-4">
+                <p:messages closable="true" showDetail="true" showSummary="true" />
+
+                <h:form id="form" class="max-w-lg flex flex-col mx-auto p-4 bg-white shadow-lg rounded-lg space-y-4">
                     <p class="text-center text-xl">Upload Note</p>
-                    <p:messages closable="true" showDetail="true" showSummary="true"  />
 
                     <!-- Title Field -->
                     <div class="mb-4">
@@ -32,36 +31,35 @@
 
                     <!-- Public Checkbox -->
                     <div class="mb-4">
-                        <p:selectBooleanCheckbox id="public" value="#{uploadNotesBean.isPublic}" 
-                                                 class="form-checkbox text-blue-500" />
+                        <p:selectBooleanCheckbox id="public" value="#{uploadNotesBean.isPublic}" />
                         <label for="public" class="inline-block text-gray-700 ml-2">Public</label>
                     </div>
 
                     <!-- File Upload -->
-                    <div class="mb-4">
+                       
                         <label for="fileUpload" class="block text-gray-700 font-bold mb-2">Upload PDF</label>
-                        <p:fileUpload id="fileUpload" mode="advanced" 
-                                      accept=".pdf" 
-                                      fileLimit="1" 
-                                      label="Choose PDF"
-                                      auto="true"
-                                      required="true"
-                                      listener="#{uploadNotesBean.handleFileUpload}"
-                                      class="p-fileupload w-full border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                    </div>
+                        <p:fileUpload 
+                            listener="#{uploadNotesBean.upload}"
+                            accept=".pdf"
+                            mode="advanced"
+                            skinSimple="true"
+                            required="true"/>
+
+
 
                     <!-- Submit Button -->
-                    <div>
-                        <p:commandButton value="Submit" 
-                                         action="#{uploadNotesBean.submit}" 
-                                         class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded cursor-pointer" />
-                    </div>
+                    <p:commandButton value="Submit"
+                                     action="#{uploadNotesBean.submit}"
+                                     class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded cursor-pointer" />
 
                 </h:form>
-
+                
+                <script>
+                    $("#form").on("submit",(e)=>{
+                        e.preventDefault();
+                    });
+                </script>
             </ui:define>
-
         </ui:composition>
-
     </body>
 </html>

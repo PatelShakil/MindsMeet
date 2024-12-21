@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <body>
+
+        <ui:composition template="./AdminMaster.xhtml">
+
+            <ui:define name="content">
+                <div class="flex flex-col mx-2 mt-2">
+                    <h4 class="text-center">All Users</h4>
+                    <ui:repeat value="#{admin.users}" var="user">
+                        <div class="p-2 m-2 border border-1 rounded-md">
+                            <p class="text-xl">@#{user.username}</p>
+                            <p class="text-md">#{user.name}</p>
+                            <p class="text-md">#{user.email}</p>
+                            <p class="text-md">#{user.phone}</p>
+                            <!--<h:link class="text-blue-500 text-bold" value="@#{user.username}" outcome="#{utility.APP_PATH}UserDetails.jsf?faces-redirect=true&amp;username={user.username}" />-->
+                        </div>
+                    </ui:repeat>
+                </div>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

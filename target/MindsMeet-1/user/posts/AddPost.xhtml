@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <body>
+
+        <ui:composition template="./../Master.xhtml">
+
+            <ui:define name="content">
+                <h:form enctype="multipart/form-data" class="max-w-lg mx-auto p-4 bg-white shadow-lg rounded-lg space-y-4">
+                    <p class="text-center text-xl">Upload Post / Achievements </p>
+                    <p:messages closable="true" showDetail="true" showSummary="true"  />
+
+                    <!-- Title Field -->
+                    <div class="mb-4">
+                        <label for="caption" class="block text-gray-700 font-bold mb-2">Caption</label>
+                        <p:inputText id="caption" value="#{post.caption}" required="true" 
+                                     placeholder="Enter the Caption"
+                                     class="p-inputtext w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    </div>
+
+                    <label for="fileUpload" class="block text-gray-700 font-bold mb-2">Upload Photo</label>
+                    <p:fileUpload 
+                        listener="#{post.uploadFile}"
+                        accept=".png,.jpg,.jpeg"
+                        mode="advanced"
+                        skinSimple="true"
+                        required="true"/>
+                    
+                    <div class="mb-4">
+                        <label for="location" class="block text-gray-700 font-bold mb-2">Location</label>
+                        <p:inputText id="location" value="#{post.location}" required="true" 
+                                     placeholder="Enter the Location"
+                                     class="p-inputtext w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    </div>
+                    
+              
+
+                    <!-- Submit Button -->
+                    <p:commandButton value="Submit"
+                                     action="#{post.addPost}"
+                                     class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded cursor-pointer" />
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

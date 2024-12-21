@@ -106,26 +106,13 @@ public class UserBean implements UserBeanLocal {
             gu.setGroupId(gm);
             gu.setUserId(user);
             em.persist(gu);
-
-            if (u != null) {
-                res.setMessage("Signup Successful!!!");
-                res.setStatus(true);
-                res.setObj(u);
-            } else {
-                res.setMessage("Signup error!!!");
-                res.setStatus(false);
-                res.setObj(null);
-            }
         } catch (ConstraintViolationException e) {
             e.getConstraintViolations().forEach(err -> System.out.println(err.toString()));
         } catch (Exception e) {
             e.printStackTrace();
-            res.setMessage("An error occurred during signup: " + e.getMessage());
-            res.setStatus(false);
-            res.setObj(null);
         }
 
-        return Response.ok(res).build();
+        return Response.ok().build();
     }
 
     @Override
@@ -233,85 +220,7 @@ public class UserBean implements UserBeanLocal {
         }
     }
 
-    @Override
-    public void doPost(PostFeedMst pfm) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void likeOnPost(Integer postId, Integer userId) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void doCommentOnPost(PostComments pc) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void deletePost(Integer pId) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void joinCommunity(Integer cId, Integer userId) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void createCommunity(CommunityMst cm) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void leftCommunity(Integer cId, Integer userId) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void removeMemberToCommunity(Integer cmId, Integer cId) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void deleteCommunity(Integer cId) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void postMsgInCommunity(CommunityMsg cms) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void replyToCommunityMsg(CommunityReply cr) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void addMemberToCommunity(CommunityMembers cm) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public Resource<Collection<MsgMst>> getAllMsg(Integer rId, Integer sId) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void sendMsg(MsgMst msg) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public Response loadCommunityMsg(Integer cId) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public Response viewPosts() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
+  
 
     @Override
     public Response getAllUsers() {
@@ -373,6 +282,15 @@ public class UserBean implements UserBeanLocal {
     public Users getUserByEmail(String email) {
         Users user =(Users) em.createNamedQuery("Users.findByEmail").setParameter("email", email).getSingleResult();
     return user;
+    }
+
+    @Override
+    public Collection<Notes> getNotesForUsers(String email) {
+        Users user = getUserByEmail(email);
+        
+        Collection<Notes> notes = em.createQuery("select n from Notes n where n.userId = :u").setParameter("u", user).getResultList();
+        System.out.println(notes.toString());
+        return notes;
     }
 
 }

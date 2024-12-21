@@ -63,17 +63,11 @@ public class PostComments implements Serializable {
     @ManyToOne
     private PostFeedMst postId;
 
+
+
     public PostComments() {
-    }
-
-    public PostComments(Integer id) {
-        this.id = id;
-    }
-
-    public PostComments(Integer id, Date createdAt, Date updatedAt) {
-        this.id = id;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.createdAt = createdAt == null ? new Date() : createdAt;
+        this.updatedAt = updatedAt == null ? new Date() : updatedAt;
     }
 
     public Integer getId() {

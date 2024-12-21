@@ -8,9 +8,11 @@ import auth.KeepRecord;
 import com.techsavvy.mindsmeet.entity.FaqAnswers;
 import com.techsavvy.mindsmeet.entity.FaqMst;
 import com.techsavvy.mindsmeet.entity.FaqVotes;
+import com.techsavvy.mindsmeet.entity.Notes;
 import com.techsavvy.mindsmeet.entity.Users;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Optional;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -46,6 +48,12 @@ public class FaqBean implements FaqBeanLocal {
     // "Insert Code > Add Business Method")
     @Override
     public Response uploadFaq(FaqMst faq) {
+        
+        Users user = ubl.getUserByEmail(faq.getUserId().getEmail());
+        faq.setUserId(user);
+             
+        
+        
         try {
             em.persist(faq);
             if (!faq.getFaqScreenshotCollection().isEmpty()) {
@@ -75,10 +83,13 @@ public class FaqBean implements FaqBeanLocal {
         try {
             System.out.print(answer.getAnswer());
             // Retrieve the FAQ by ID
-            FaqMst faq = em.find(FaqMst.class, answer.getFaqId().getId());
+            System.out.print(answer.getFaqId());
+            FaqMst faq = em.find(FaqMst.class, answer.retreiveFaqId());
             if (faq == null) {
                 return Response.status(Response.Status.NOT_FOUND).entity("FAQ not found").build();
             }
+            Users user = ubl.getUserByEmail(answer.getUserId().getEmail());
+            answer.setUserId(user);
                        
             // Set user and FAQ
             answer.setFaqId(faq);
@@ -129,5 +140,20 @@ public class FaqBean implements FaqBeanLocal {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
 
         }
+    }
+
+    @Override
+    public Collection<FaqMst> getFaqsForUsers(String email) {
+        Users user = ubl.getUserByEmail(email);
+
+        Collection<FaqMst> faqs = em.createQuery("select n from FaqMst n where n.userId = :u").setParameter("u", user).getResultList();
+        return faqs;
+    }
+
+    @Override
+    public Collection<FaqAnswers> getFaqAnswers(Integer id) {
+        FaqMst faq = em.find(FaqMst.class,id);
+        Collection<FaqAnswers> ans = em.createQuery("select a from FaqAnswers a where a.faqId.id = :faq").setParameter("faq", id).getResultList();
+        return ans;
     }
 }

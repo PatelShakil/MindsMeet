@@ -4,7 +4,9 @@
  */
 package api;
 
+import chat.ChatBean;
 import com.techsavvy.mindsmeet.entity.FaqMst;
+import com.techsavvy.mindsmeet.entity.MsgMst;
 import com.techsavvy.mindsmeet.entity.NoteComments;
 import com.techsavvy.mindsmeet.entity.NoteReplies;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -77,6 +79,7 @@ public class UserResource {
 
     @EJB
     UserBeanLocal ubl;
+    @EJB ChatBean cb;
 
     @POST
     @Path("user/login")
@@ -245,13 +248,19 @@ public class UserResource {
 
   
 
+    
     @GET
-    @Path("post/get-all")
+    @Path("chat/history/{senderId}/{receiverId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllPosts() {
-        return ubl.viewPosts();
+    public Collection<MsgMst> getAllMessages1(@PathParam("receiverId")Integer id,@PathParam("senderId")Integer sId){
+        return cb.getMessages(sId, id);
     }
     
-    
+    @GET
+    @Path("chat/history/{receiverId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Collection<MsgMst> getAllMessages(@PathParam("receiverId")Integer id){
+        return cb.getMessagesForReceiver(id);
+    }
 
 }

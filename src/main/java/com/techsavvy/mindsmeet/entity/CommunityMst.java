@@ -7,6 +7,7 @@ package com.techsavvy.mindsmeet.entity;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,7 +33,7 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "community_mst")
 @NamedQueries({
-    @NamedQuery(name = "CommunityMst.findAll", query = "SELECT c FROM CommunityMst c"),
+    @NamedQuery(name = "CommunityMst.findAll", query = "SELECT c FROM CommunityMst c order by c.createdAt DESC"),
     @NamedQuery(name = "CommunityMst.findById", query = "SELECT c FROM CommunityMst c WHERE c.id = :id"),
     @NamedQuery(name = "CommunityMst.findByName", query = "SELECT c FROM CommunityMst c WHERE c.name = :name"),
     @NamedQuery(name = "CommunityMst.findByIsActive", query = "SELECT c FROM CommunityMst c WHERE c.isActive = :isActive"),
@@ -80,17 +81,8 @@ public class CommunityMst implements Serializable {
     private Collection<CommunityMsg> communityMsgCollection;
 
     public CommunityMst() {
-    }
-
-    public CommunityMst(Integer id) {
-        this.id = id;
-    }
-
-    public CommunityMst(Integer id, String name, Date createdAt, Date updatedAt) {
-        this.id = id;
-        this.name = name;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.createdAt = createdAt != null ? createdAt : new Date();
+        this.updatedAt = updatedAt != null ? updatedAt : new Date();
     }
 
     public Integer getId() {
@@ -157,6 +149,7 @@ public class CommunityMst implements Serializable {
         this.userId = userId;
     }
 
+    @JsonbTransient
     public Collection<CommunityMembers> getCommunityMembersCollection() {
         return communityMembersCollection;
     }
@@ -165,6 +158,7 @@ public class CommunityMst implements Serializable {
         this.communityMembersCollection = communityMembersCollection;
     }
 
+    @JsonbTransient
     public Collection<CommunityMsg> getCommunityMsgCollection() {
         return communityMsgCollection;
     }

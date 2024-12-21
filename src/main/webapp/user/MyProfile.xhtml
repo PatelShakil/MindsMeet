@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./Master.xhtml">
+
+            <ui:define name="content">
+                <h:form> 
+                    <div class="flex flex-col w-full">
+                        <div class="w-full flex justify-center">
+                            <p:graphicImage value="${utility.IMAGES_PATH}${myProfile.user.profile}?${System.currentTimeMillis()}"
+                                            class="h-44 w-44 rounded-full border border-2"/>
+                        </div>
+                        <h3 class="text-2xl  text-center font-bold mt-2">@${myProfile.user.username}</h3>
+                        <p class="text-mute text-center mb-2">${myProfile.user.email}</p>
+                        <hr />
+                        <p class="text-center my-2 font-semibold">Your Contents</p>
+                        <hr /> 
+
+                        <p:tabView class="mt-1">
+                            <p:tab title="Notes">
+                                <div class="mx-auto p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                                    <ui:repeat value="#{myProfile.notes}" var="note">
+                                        <div class="bg-white shadow-md rounded-lg overflow-hidden border hover:shadow-lg">
+                                            <div class="p-4">
+                                                <h2 class="font-bold text-xl mb-2 text-gray-800">#{note.title}</h2>
+                                                <p class="text-gray-600 text-sm mb-4">#{note.description}</p>
+                                                <p class="text-gray-500 text-xs mb-2">Uploaded by: <h:link class="text-blue-500 text-bold" value="@#{note.userId.username}" outcome="/UserDetails.jsf?faces-redirect=true&amp;username=${note.userId.username}" /></p>
+                                                <p class="text-gray-500 text-xs">Date: #{note.createdAt}</p>
+                                                <div class="mt-4">
+                                                 <a href="#{utility.APP_PATH}user/notes/NoteDetail.jsf?noteId=#{note.id}" class="text-white bg-green-600 px-3 py-2 rounded-md shadow-sm hover:shadow-md hover:bg-green-500" >View Details</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ui:repeat>
+                                </div>
+                            </p:tab>
+                            <p:tab title="FAQs">
+                                <div class="container mx-auto p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                                    <ui:repeat value="#{myProfile.faqs}" var="faq">
+                                        <div class="bg-white shadow-md rounded-lg overflow-hidden border hover:shadow-lg">
+                                            <div class="p-4">
+                                                <h2 class="font-bold text-xl mb-2 text-gray-800">#{faq.que}</h2>
+                                                <p class="text-gray-600 text-sm mb-4">#{faq.description}</p>
+                                                <p class="text-gray-500 text-xs mb-2">Uploaded by: <h:link class="text-blue-500 text-bold" value="@#{faq.userId.username}" outcome="/UserDetails.jsf?faces-redirect=true&amp;username=${note.userId.username}" /></p>
+                                                <p class="text-gray-500 text-xs">Date: #{faq.createdAt}</p>
+                                                <div class="mt-4">
+                                                    <a href="#{utility.APP_PATH}user/faq/FaqDetails.jsf?faqId=#{faq.id}" class="text-white bg-green-600 px-3 py-2 rounded-md shadow-sm hover:shadow-md hover:bg-green-500" >View Details</a>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ui:repeat>
+                                </div>
+
+                            </p:tab>
+                            <p:tab title="Posts">
+                                <div class="container mx-auto p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                                    <ui:repeat value="#{myProfile.posts}" var="p">
+                                        <div class="bg-white shadow-md rounded-lg overflow-hidden border hover:shadow-lg">
+                                            <div class="p-4">
+                                                <h:graphicImage value="#{utility.IMAGES_PATH}#{p.photo}"
+                                                                class="rounded-lg" />
+                                                <h2 class="font-bold text-md mb-2 mt-1 text-gray-800">#{p.caption}</h2>
+                                                <p class="text-gray-600 text-sm mb-1">#{p.location}</p>
+                                                <p class="text-gray-500 text-xs">Date: #{p.createdAt}</p>
+                                                <div class="mt-4">
+                                                    <a href="#{utility.APP_PATH}user/posts/PostDetails.jsf?postId=#{p.id}" class="text-white bg-green-600 px-3 py-2 rounded-md shadow-sm hover:shadow-md hover:bg-green-500" >View Details</a>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ui:repeat>
+                                </div>
+                            </p:tab>
+                            <p:tab title="Communities">
+                                <div class="container mx-auto p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+
+                                <ui:repeat value="#{myProfile.communities}" var="com">
+                                    <div
+                                        class="col-span-1 bg-white flex flex-col justify-center border items-center p-4 rounded-md m-1 shadow-md hover:shadow-lg">
+                                        <p:graphicImage value="#{utility.IMAGES_PATH}#{com.profile}"
+                                                        class="h-28 w-28 rounded-full" />
+                                        <p class="text-center text-xl mt-2 font-semibold">#{com.name}</p>
+                                        <div class="mt-4">
+                                            <a href="#{utility.APP_PATH}user/community/Community.jsf?comId=#{com.id}" class="text-white bg-green-600 px-3 py-2 rounded-md shadow-sm hover:shadow-md hover:bg-green-500" >View</a>
+
+                                        </div>
+                                    </div>
+                                </ui:repeat>
+                                </div>
+                            </p:tab>
+
+                        </p:tabView>
+
+                    </div>
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

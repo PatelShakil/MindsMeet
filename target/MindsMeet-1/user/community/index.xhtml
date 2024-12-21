@@ -1,14 +1,72 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
 
     <body>
 
         <ui:composition template="./../Master.xhtml">
 
             <ui:define name="content">
-                Communities Coming Soon...
+                <div class="grid grid-cols-1 lg:grid-cols-2">
+                    <div class="col-span-1 bg-gray-200 rounded-md p-2 m-2">
+                        <p class="text-xl text-mute text-center">Your Communities</p>
+                        <div class="grid grid-cols-1 lg:grid-cols-2">
+                            <h:link outcome="AddCommunity.jsf" class="col-span-1 bg-white flex flex-col p-2 items-center justify-center rounded-md m-1 shadow-sm hover:shadow-lg">
+                                <p:graphicImage value="https://cdn-icons-png.flaticon.com/512/13415/13415530.png"
+                                                class="h-28 w-28 rounded-full" />     
+                                <p class="text-center mt-2 text-2xl font-semibold">Create Community</p>
+                            </h:link>
+                            <ui:repeat value="#{community.myCommunities}" var="com">
+                                <h:link
+                                    outcome="Community.jsf?faces-redirect=true&amp;comId=#{com.id}"
+                                    class="col-span-1 bg-white flex flex-col justify-center items-center p-2 rounded-md m-1 shadow-sm hover:shadow-lg">
+                                    <p:graphicImage value="#{utility.IMAGES_PATH}#{com.profile}"
+                                                    class="h-28 w-28 rounded-full" />
+                                    <p class="text-center text-xl mt-2 font-semibold">#{com.name}</p>
+                                </h:link>
+                            </ui:repeat>
+                        </div>
+
+                    </div>
+                    <div class="col-span-1 bg-gray-200 rounded-md p-2 m-2">
+                        <p class="text-xl text-mute text-center">Joined Communities</p>
+                        <div class="grid grid-cols-1 lg:grid-cols-2">
+                           
+                            <ui:repeat value="#{community.joinedCommunities}" var="com">
+                                <h:link
+                                    outcome="Community.jsf?faces-redirect=true&amp;comId=#{com.id}"
+                                    class="col-span-1 bg-white flex flex-col justify-center items-center p-2 rounded-md m-1 shadow-sm hover:shadow-lg">
+                                    <p:graphicImage value="#{utility.IMAGES_PATH}#{com.profile}"
+                                                    class="h-28 w-28 rounded-full" />
+                                    <p class="text-center text-xl mt-2 font-semibold">#{com.name}</p>
+                                </h:link>
+                            </ui:repeat>
+                        </div>
+
+                    </div>
+                    <div class="col-span-2 bg-gray-200 rounded-md p-2 m-2">
+                        <p class="text-xl text-mute text-center">All Communities</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                            <ui:repeat value="#{community.allCommunities}" var="com">
+                                <h:link
+                                    outcome="Community.jsf?faces-redirect=true&amp;comId=#{com.id}" 
+                                    class="col-span-1 bg-white flex flex-col justify-center items-center p-2 rounded-md m-2 shadow-sm hover:shadow-lg">
+                                    <p:graphicImage value="#{utility.IMAGES_PATH}#{com.profile}"
+                                                    class="h-28 w-28 rounded-full" />
+                                    <p class="text-center text-xl mt-2 font-semibold">#{com.name}</p>
+                                    <h:form>
+                                        <h:commandButton value="Join" action="#{community.joinCommunity(com.id)}"
+                                                         class="bg-green-500 p-1 px-5 rounded-full text-white hover:shadow-lg shadow-sm mt-2 cursor-pointer"/>
+                                    </h:form>
+                                </h:link>
+                            </ui:repeat>
+                        </div>
+                    </div>
+                    
+                </div>
 
             </ui:define>
 

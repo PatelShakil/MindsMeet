@@ -1,14 +1,58 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
 
     <body>
 
         <ui:composition template="./../Master.xhtml">
 
             <ui:define name="content">
-                Posts Coming Soon...
+                <div class="fixed bg-gradient-to-r from-green-400 via-green-500 to-blue-400 hover:shadow-md hover:from-blue-400 hover:via-green-400 hover:to-green-500 bottom-20 right-10 rounded-full p-2 px-5 py-4 shadow-lg">
+                    <h:link outcome="AddPost.jsf" class="text-white font-semibold text-2xl" value="Add Post" /><br />
+                </div>                <div class="container flex flex-col justify-center p-6 gap-2">
+                    <ui:repeat value="#{post.posts}" var="p">
+                        <a href="#{utility.APP_PATH}user/posts/PostDetails.jsf?postId=#{p.id}" >
+                            <div class="bg-white mx-auto max-w-screen-md rounded-lg border border-2 border-green-200 p-2 flex flex-col shadow-md shadow-green-500/50 hover:shadow-[30px] hover:shadow-green-500/100">
+                                <div class="flex py-2 items-center justify-between gap-2">
+                                    <div class="flex gap-2">
+                                        <p:graphicImage value="#{utility.IMAGES_PATH}#{p.userId.profile}"
+                                                        class="h-14 w-14 rounded-full border border-1 border-gray-700" />
+                                        <div class="flex flex-col">
+                                            <h2 class="font-bold text-xl mb-1 text-gray-800">#{p.userId.name}</h2>
+                                            <p class="font-medium text-md">#{p.location} </p>
+                                        </div>
+                                    </div>
+                                    <p class="text-mute text-sm text-end">#{p.createdAt}</p>
+                                </div>
+                                <p:graphicImage
+                                    value="#{utility.IMAGES_PATH}#{p.photo}"
+                                    class="rounded-lg mb-2 " 
+                                    style="max-width: 100%; /* Make the image width responsive */
+                                    height: auto;    /* Maintain aspect ratio */
+                                    max-height: 500px; /* Limit the height to avoid covering the screen */
+                                    object-fit: contain; /* Ensure the image fits well without distortion */
+                                    "/>
+                                <p class="text-md font-semibold mb-2">#{p.caption}</p>
+                                <h:form id="likeForm_#{p.id}">
+                                    <p:commandButton
+                                        styleClass="bg-transparent border-none text-red-500 hover:text-red-700"
+                                        icon="#{post.isPostLiked(p) ? 'pi pi-heart-fill' : 'pi pi-heart'}"
+                                        action="#{post.doLike(p.id)}"
+                                        update="@this"
+                                        value="#{post.getLikesCount(p)} Likes"
+                                        oncomplete="window.location.reload();"
+                                        />
+                                </h:form>
+
+
+                            </div>
+                           
+                        </a>
+                    </ui:repeat>
+                </div>
 
             </ui:define>
 

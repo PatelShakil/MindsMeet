@@ -141,9 +141,19 @@ public class FaqAnswers implements Serializable {
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
+    
     @JsonbTransient
     public FaqMst getFaqId() {
         return faqId;
+    }
+    
+    public void insertFaqId(FaqMst id){
+        System.out.print(id);
+        this.faqId = id;
+    }
+    
+    public Integer retreiveFaqId(){
+        return this.faqId.getId();
     }
 
     public void setFaqId(FaqMst faqId) {
@@ -180,7 +190,7 @@ public class FaqAnswers implements Serializable {
 
     @Override
     public String toString() {
-        return "com.techsavvy.mindsmeet.entity.FaqAnswers[ id=" + id + " ]";
+        return "com.techsavvy.mindsmeet.entity.FaqAnswers[ id=" + id + "answer = "+answer+ " ]";
     }
     
 }

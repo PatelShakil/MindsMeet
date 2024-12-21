@@ -27,13 +27,27 @@
                                                                         <iframe src="#{noteDetailBean.note.file}" class="w-full h-96 border rounded-lg" frameborder="0"></iframe>-->
 
                                     <h2 class="text-xl font-bold mb-2">PDF Section</h2>
-                                    <p:commandButton value="View PDF" onclick="PF('pdfDialog').show()" type="button"
-                                                     class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-blue-600" />
+                                    <pe:documentViewer
+                                        id="pdfVw"
+                                        height="90vh"
+                                        width="100%"
+                                        class="min-h-screen"
+                                        style="height: 70vh;"
+                                        url="#{noteDetailBean.note.file}" />
+                                    <script>
+                                        $(document).ready(function () {
+                                            pdfHideButton('openFile');
+                                            pdfHideButton('download');
+                                            pdfHideButton('viewBookmark');
+                                        });
+                                    </script>
+                                    <!--                                    <p:commandButton value="View PDF" onclick="PF('pdfDialog').show()"
+                                                                                         class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-blue-600" />-->
                                 </p:tab>
 
                                 <!-- Text Tab -->
                                 <p:tab title="Text">
-                                    <h2 class="text-xl font-bold mb-2">Text Content (Page #{noteDetailBean.currentPage}):</h2>
+                                    <h2 class="text-xl font-bold mb-2">Text Content (Page #{noteDetailBean.currentPage} of #{noteDetailBean.totalPages}):</h2>
                                     <p class="text-gray-600 mb-4">
                                         #{noteDetailBean.currentPageText}
                                     </p>
@@ -47,25 +61,21 @@
                                 </p:tab>
                             </p:tabView>
                             <!-- PDF Dialog -->
-                            <p:dialog widgetVar="pdfDialog" draggable="false" modal="true" closable="true" maximizable="true"  fitViewport="true" responsive="true" closeOnEscape="true" resizable="false"
-                                      styleClass="pdf-dialog" style="width: 100%; height:100%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(8px);">
-                                <div class="w-full">
-                                    <!--<iframe width="100%" src="#{noteDetailBean.note.file}" class="w-full h-full border-none" frameborder="0" style="width: 100%; height:80vh;"></iframe>-->
-                                    <p:media height="100vh" width="100%" class="h-screen w-full" value="#{noteDetailBean.note.file}" />
-                                    <!--                                  <pe:documentViewer
-                                        height="90vh"
-                                            width="100%"
-                                        url="http://localhost/proxy.php?url=https://pdfobject.com/pdf/sample.pdf" />
-                                    <p>#{noteDetailBean.note.file}</p>-->
-                                </div>
-
-                            </p:dialog>
+                            <!--                            <p:dialog widgetVar="pdfDialog" draggable="false" modal="true" closable="true" maximizable="true"  fitViewport="true" responsive="true" closeOnEscape="true" resizable="false"
+                                                                  styleClass="pdf-dialog" style="width: 100%; height:100%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(8px);">
+                                                            <div class="w-full">
+                            
+                                                            </div>
+                            
+                                                        </p:dialog>-->
                         </div>
                     </div>
+
                 </h:form>
             </ui:define>
 
         </ui:composition>
+
 
     </body>
 </html>
