@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <body>
+
+        <ui:composition template="./AdminMaster.xhtml">
+
+            <ui:define name="content">
+                <h:form>
+                    <div class="card">
+                        <p:dataTable
+                            var="p"
+                            value="#{admin.posts}"
+                            paginator="true"
+                            rows="10"
+                            rowsPerPageTemplate="5,10,15"
+                            resizableColumns="true"
+                            sortMode="multiple"
+                            scrollable="true"
+                            scrollHeight="500px"
+                            styleClass="advanced-table">
+
+                            <!-- Table Header with Filters -->
+                            <p:column field="id" headerText="ID" sortable="false" filterBy="#{p.id}" filterMatchMode="contains">
+                                <h:outputText value="#{p.id}" />
+                            </p:column>
+
+                            <p:column colspan="2" headerText="Post" style="text-align:center">
+                                <h:graphicImage value="#{utility.IMAGES_PATH}#{p.photo}"
+                                                class="h-32 w-32 rounded-md shadow-md"
+                                                
+                                                alt="No Image" />
+                            </p:column>
+
+                            <p:column field="caption" headerText="Caption" sortable="false" >
+                                <h:outputText value="#{p.caption}" />
+                            </p:column>
+
+                            <p:column field="location" headerText="Location" sortable="false">
+                                <h:outputText value="#{p.location}" />
+                            </p:column>
+
+                            <p:column field="userId.name" headerText="Username" sortable="false">
+                                <a class="text-blue-500 font-bold" href="#{utility.APP_PATH}UserDetails.jsf?username=#{p.userId.username}">
+                                    <h:outputText value="#{p.userId.name}" />
+                                </a>
+                            </p:column>
+
+                            <p:column headerText="Likes">
+                                <ui:repeat value="#{p.postLikesCollection}" var="pl">
+                                    <a class="text-blue-500 text-bold" href="#{utility.APP_PATH}UserDetails.jsf?username=#{pl.userId.username}">
+                                        <p class="text-sm">@#{pl.userId.username}</p>
+                                    </a><br/>
+                                </ui:repeat>
+                            </p:column>
+
+                            <p:column field="postLikesCollection.size()" headerText="Like Count" sortable="false">
+                                <h:outputText value="#{p.postLikesCollection.size()}" />
+                            </p:column>
+
+                     
+
+                            <p:column headerText="Uploaded At" field="createdAt" sortable="false" >
+                                <h:outputText value="#{p.createdAt}" />
+                            </p:column>
+
+                          
+                        </p:dataTable>
+                    </div>
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

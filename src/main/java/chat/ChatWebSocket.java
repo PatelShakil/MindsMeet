@@ -109,6 +109,18 @@ public class ChatWebSocket {
         private Integer senderId;
         private Integer receiverId;
         private String message;
+        private String createdAt;
+
+        public String getCreatedAt() {
+            return createdAt;
+        }
+
+        public void setCreatedAt(String createdAt) {
+            this.createdAt = createdAt;
+        }
+        
+        
+        
 
         // Getters and setters
         public Integer getSenderId() {

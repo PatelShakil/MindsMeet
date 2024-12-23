@@ -20,6 +20,7 @@ import java.util.Collection;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import org.primefaces.event.FileUploadEvent;
@@ -33,6 +34,8 @@ import utils.Utils;
 @Named(value = "post")
 @ViewScoped
 public class PostBean implements Serializable {
+    @Inject
+    KeepRecord keepRecord;
 
     private PostApi api = new PostApi();
     @EJB PostBeanLocal pbl;
@@ -116,7 +119,7 @@ public class PostBean implements Serializable {
         pfm.setLocation(location);
         pfm.setPhoto(photo);
         Users user = new Users();
-        user.setEmail(KeepRecord.getUsername());
+        user.setEmail(keepRecord.getUsername());
         pfm.setUserId(user);
         
         api.doPost(pfm);
@@ -164,7 +167,7 @@ public class PostBean implements Serializable {
     }
 
     public String doLike(Integer postId) {
-        pbl.likeOnPost(postId, KeepRecord.getUsername());
+        pbl.likeOnPost(postId, keepRecord.getUsername());
         posts = pbl.viewPosts(); // Reload posts to reflect the updated state
         return null; // No navigation, stay on the same page
     }
@@ -178,7 +181,7 @@ public class PostBean implements Serializable {
 
     public boolean isPostLiked(PostFeedMst post) {
         return pbl.getPostLikes(post.getId()).stream()
-                .anyMatch(like -> like.getUserId().getEmail().equals(KeepRecord.getUsername()));
+                .anyMatch(like -> like.getUserId().getEmail().equals(keepRecord.getUsername()));
     }
     
     

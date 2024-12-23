@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./AdminMaster.xhtml">
+
+            <ui:define name="content">
+                <h:form>
+                    <div class="card shadow-lg rounded-md">
+                        <p:dataTable
+                            var="n"
+                            value="#{admin.notes}"
+                            paginator="true"
+                            rows="10"
+                            rowsPerPageTemplate="5,10,15"
+                            sortBy="#{n.createdAt}"
+                            resizableColumns="true"
+                            scrollable="true"
+                            class="overflow-auto max-h-[85vh] text-sm border rounded-md">
+
+                            <!-- Column: ID -->
+                            <p:column field="id" sortable="false" headerText="ID">
+                                <h:outputText value="#{n.id}" />
+                            </p:column>
+
+                            <!-- Column: Question -->
+                            <p:column field="title" sortable="false" headerText="Title" sortBy="#{n.title}">
+                                <h:outputText value="#{n.title}" />
+                            </p:column>
+
+                            <!-- Column: Description -->
+                            <p:column field="description" colspan="2" sortable="false" headerText="Description" sortBy="#{n.description}">
+                                <h:outputText value="#{n.description}" class="text-mute" />
+                            </p:column>
+
+                            <!-- Column: Uploaded By -->
+                            <p:column field="userId.username" sortable="false" headerText="Uploaded By" sortBy="#{n.userId.username}">
+                                <a class="text-blue-500 text-bold"
+                                   href="#{utility.APP_PATH}UserDetails.jsf?username=#{n.userId.username}">
+                                    <p class="text-sm">@#{n.userId.username}</p>
+                                </a>
+                            </p:column>
+
+                            <!-- Column: Code -->
+                            <p:column sortable="false" headerText="Action">
+                                <a href="#{utility.APP_PATH}user/notes/NoteDetail.jsf?noteId=#{n.id}" class="bg-green-500 px-2 p-1 rounded-md shadow-md text-white">View Details</a >
+                            </p:column>
+
+                            <!-- Column: Created At -->
+                            <p:column field="createdAt" sortable="false" headerText="Created At" sortBy="#{n.createdAt}">
+                                <h:outputText value="#{n.createdAt}">
+                                    <f:convertDateTime pattern="yyyy-MM-dd HH:mm" />
+                                </h:outputText>
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

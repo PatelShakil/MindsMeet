@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./AdminMaster.xhtml">
+
+            <ui:define name="content">
+                <h:form>
+                    <div class="card">
+                        <p:dataTable
+                            var="c"
+                            value="#{admin.communities}"
+                            paginator="true"
+                            rows="10"
+                            rowsPerPageTemplate="5,10,15"
+                            resizableColumns="true"
+                            sortMode="multiple"
+                            scrollable="true"
+                            scrollHeight="500px"
+                            styleClass="advanced-table">
+
+                            <!-- Table Header with Filters -->
+                            <p:column field="id" headerText="ID" sortable="false" filterBy="#{c.id}">
+                                <h:outputText value="#{c.id}" />
+                            </p:column>
+
+                            <p:column  headerText="Logo" style="text-align:center">
+                                <h:graphicImage value="#{utility.IMAGES_PATH}#{c.profile}"
+                                                class="h-16 w-16 rounded-md shadow-md"
+
+                                                alt="No Image" />
+                            </p:column>
+
+                            <p:column field="name" headerText="Name" sortable="false" >
+                                <h:outputText value="#{c.name}" />
+                            </p:column>
+
+                            <p:column field="description" colspan="2" headerText="Description" sortable="false">
+                                <h:outputText value="#{c.description}" style="overflow-wrap: break-word" />
+                            </p:column>
+
+                            <p:column field="userId.username" headerText="Admin" sortable="false">
+                                <a class="text-blue-500 font-bold" href="#{utility.APP_PATH}UserDetails.jsf?username=#{c.userId.username}">
+                                    <h:outputText value="#{c.userId.name}" />
+                                </a>
+                            </p:column>
+
+                        
+
+                            <!-- Column: Created At -->
+                            <p:column field="createdAt" sortable="false" headerText="Created At" sortBy="#{c.createdAt}">
+                                <h:outputText value="#{c.createdAt}">
+                                    <f:convertDateTime pattern="yyyy-MM-dd HH:mm" />
+                                </h:outputText>
+                            </p:column>
+
+
+                        </p:dataTable>
+                    </div>
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

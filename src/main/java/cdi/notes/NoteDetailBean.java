@@ -5,6 +5,7 @@
 package cdi.notes;
 
 import api.UserApi;
+import auth.KeepRecord;
 import cdi.faq.FaqDetailBean;
 import com.techsavvy.mindsmeet.entity.Notes;
 import com.techsavvy.mindsmeet.entity.NotesText;
@@ -24,6 +25,7 @@ import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 import utils.Utils;
 
@@ -35,6 +37,7 @@ import utils.Utils;
 @ViewScoped
 public class NoteDetailBean implements Serializable {
 
+    @Inject KeepRecord keepRecord;
     private Notes note;
     private UserApi userApi;
     private List<String> textPages;
@@ -94,6 +97,7 @@ public class NoteDetailBean implements Serializable {
 
  
     public NoteDetailBean() {
+//        userApi = new UserApi(keepRecord.getToken()) ; // Ensure proper dependency injection if applicable
         userApi = new UserApi() ; // Ensure proper dependency injection if applicable
 
         String noteId = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("noteId");

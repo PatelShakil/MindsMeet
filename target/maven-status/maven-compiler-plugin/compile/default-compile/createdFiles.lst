@@ -19,6 +19,7 @@ cdi\profile\MyProfileBean.class
 cdi\Utility.class
 cdi\post\PostBean.class
 com\techsavvy\mindsmeet\entity\NotesView.class
+cdi\admin\adminBean$4.class
 rest\MyRestFilter.class
 api\UserApi.class
 com\techsavvy\mindsmeet\entity\PostFeedMst.class
@@ -28,11 +29,13 @@ ejb\FaqBeanLocal.class
 com\techsavvy\mindsmeet\entity\CommunityMst.class
 ejb\UserBean.class
 cdi\post\PostDetailBean$2.class
+cdi\admin\adminBean$3.class
 cdi\AuthBean.class
 cdi\community\CommunityBean.class
 cdi\faq\FaqDetailBean.class
 cdi\notes\UploadNotesBean.class
 com\techsavvy\mindsmeet\entity\FaqMst.class
+api\CommunityApi.class
 com\techsavvy\mindsmeet\entity\GroupUsers.class
 com\techsavvy\mindsmeet\entity\PostLikes.class
 com\techsavvy\mindsmeet\entity\FaqScreenshot.class
@@ -62,10 +65,12 @@ com\techsavvy\mindsmeet\resources\entities\service\AbstractFacade.class
 utils\Utils.class
 chat\ChatWebSocket$ChatMessage.class
 cdi\community\CommunityDetailsBean$1.class
+cdi\admin\adminBean$2.class
 ejb\UserBeanLocal.class
 cdi\chat\ChatBean.class
 servlet\TestServlet.class
 cdi\post\PostDetailBean.class
+cdi\admin\adminBean$5.class
 com\techsavvy\mindsmeet\entity\CommunityMembers.class
 community\CommunityWebSocket$CommunityMessage.class
 com\techsavvy\mindsmeet\entity\FaqAnswers.class

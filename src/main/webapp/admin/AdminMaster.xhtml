@@ -9,14 +9,13 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <script src="https://cdn.tailwindcss.com"></script>
 
-        <h:outputStylesheet>
-            <link rel="preconnect" href="https://fonts.googleapis.com" />
-            <link rel="stylesheet" href="../resources/css/tailwindcss.css" />
-            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="true" />
-            <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400&amp;display=swap" rel="stylesheet" />
-        </h:outputStylesheet>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="stylesheet" href="${utility.APP_PATH}resources/css/tailwindcss.css" />
+        <link rel="stylesheet" href="#{utility.APP_PATH}resources/css/prism.css" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="true" />
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400&amp;display=swap" rel="stylesheet" />
+        <script src="https://cdn.tailwindcss.com"></script>
 
         <title>Admin Panel</title>
         <style>
@@ -36,19 +35,21 @@
         <div id="top" class="fixed flex justify-between items-center z-10 bg-green-600 text-white py-3 px-6 shadow-md w-full">
             <div class="flex gap-1 items-center">
 
-                <button id="menu" onclick="open = !open"
-                        class="top-3 left-4 bg-green-500 px-2 py-1 rounded-full focus:outline-none hover:bg-white">
-                    <i class="pi pi-bars hover:bg-green-600"></i>
+                <button id="menu" onclick="toggleSidebar()"
+                        class="top-3 mstleft-4 bg-green-500 px-2 py-1 rounded-full focus:outline-none hover:bg-green-700">
+                    <i id="menu-icon" class="pi pi-bars text-white"></i>
                 </button>
                 <a href="#{utility.APP_PATH}admin/index.jsf"><h1 class="ml-8 text-2xl font-semibold">Admin - MindsMeet</h1></a>
             </div>
-            <p:commandButton class="bg-red-300" action="#{authBean.logout()}" value="Logout" />
+            <h:form>
+                <p:commandButton class="bg-red-300" action="#{authBean.logout()}" value="Logout" />
+            </h:form>
         </div>
 
-        <div class="flex h-screen pt-14">
+        <div id="webcontainer" class="flex h-screen pt-14">
             <!-- Sidebar -->
-            <div id="left" class="bg-gray-800 text-white w-64 flex-shrink-0 transition-all duration-300 transform translate-x-0 lg:translate-x-0"
-                 x-data="{ open: true }">
+            <div id="mstleft" class="fixed top-0 pt-14 bottom-0 mstleft-0 bg-gray-800 text-white w-64 flex-shrink-0 transition-transform duration-200 ease-in-out transform -translate-x-64">
+
 
                 <!-- Sidebar toggle button -->
 
@@ -72,18 +73,19 @@
                             <li id="users-tab" class="hover:bg-green-500 rounded-tr-full rounded-br-full px-3 py-2 transition-colors duration-200">
                                 <a href="http://localhost:8080/MindsMeet/admin/Users.jsf" class="block">Users</a>
                             </li>
+                            <li id="notes-tab" class="hover:bg-green-500 rounded-tr-full rounded-br-full px-3 py-2 transition-colors duration-200">
+                                <a href="http://localhost:8080/MindsMeet/admin/Notes.jsf" class="block">Notes</a>
+                            </li>
                             <li id="faq-tab" class="hover:bg-green-500 rounded-tr-full rounded-br-full px-3 py-2 transition-colors duration-200">
-                                <a href="http://localhost:8080/MindsMeet/user/faq/ViewFaqs.jsf" class="block">FAQs</a>
+                                <a href="http://localhost:8080/MindsMeet/admin/Faqs.jsf" class="block">FAQs</a>
                             </li>
                             <li id="community-tab" class="hover:bg-green-500 rounded-tr-full rounded-br-full px-3 py-2 transition-colors duration-200">
-                                <a href="http://localhost:8080/MindsMeet/user/community/index.jsf" class="block">Communities</a>
+                                <a href="http://localhost:8080/MindsMeet/admin/Communities.jsf" class="block">Communities</a>
                             </li>
                             <li id="posts-tab" class="hover:bg-green-500 rounded-tr-full rounded-br-full px-3 py-2 transition-colors duration-200">
-                                <a href="http://localhost:8080/MindsMeet/user/posts/index.jsf" class="block">Posts</a>
+                                <a href="http://localhost:8080/MindsMeet/admin/Posts.jsf" class="block">Posts</a>
                             </li>
-                            <li id="chat-tab" class="hover:bg-green-500 rounded-tr-full rounded-br-full px-3 py-2 transition-colors duration-200">
-                                <a href="http://localhost:8080/MindsMeet/user/chat/index.jsf" class="block">Chat</a>
-                            </li>
+
 
                         </ul>
                     </div>
@@ -94,25 +96,14 @@
             </div>
 
             <!-- Main Content -->
-            <div id="content" class="flex-1 p-6 overflow-y-visible  ">
+            <div id="content" class="flex-1 ml-64 p-6 overflow-y-visible  ">
                 <ui:insert name="content">Content</ui:insert>
             </div>
         </div>
 
         <!-- Tailwind Alpine.js for sidebar behavior -->
         <script>
-            let menu = document.getElementById("menu");
-            let left = document.getElementById("left");
-            menu.onclick = function () {
-                console.log(left.classList);
-                if (left.classList.contains("hidden")) {
-                    left.classList.add("flex");
-                    left.classList.remove("hidden");
-                } else {
-                    left.classList.add("hidden");
-                    left.classList.remove("flex");
-                }
-            };
+
             // Function to highlight the correct sidebar menu item based on URL path
             window.onload = function () {
                 // Get the current path from the URL
@@ -120,39 +111,80 @@
 
                 // List of sidebar items and their corresponding paths
                 const sidebarItems = [
+                    {id: 'home-tab', path: '/index.jsf'},
                     {id: 'users-tab', path: '/Users.jsf'},
-                    {id: 'posts-tab', path: '/posts'},
-                    {id: 'faq-tab', path: '/faq'}, // Replace with the correct path if needed
-                    {id: 'community-tab', path: '/community'}, // Replace with the correct path if needed
-                    {id: 'chat-tab', path: '/chat'},
-                    {id: 'profile-tab', path: '/MyProfile.jsf'}// Replace with the correct path if needed
+                    {id: 'posts-tab', path: '/Posts.jsf'},
+                    {id: 'notes-tab', path: '/Notes.jsf'},
+                    {id: 'faq-tab', path: '/Faqs.jsf'}, // Replace with the correct path if needed
+                    {id: 'community-tab', path: '/Communities.jsf'} // Replace with the correct path if needed
                 ];
 
 // ID for the home tab
-                const homeTabId = 'home-tab';
 
 // Check if any sidebar item matches the current path
-                let isMatchFound = false;
                 // Loop through the sidebar items and highlight the matching tab
                 sidebarItems.forEach(item => {
                     if (currentPath.includes(item.path)) {
                         document.getElementById(item.id).classList.add('bg-green-500');
-                        isMatchFound = true;
-                    } else {
-                        document.getElementById(item.id).classList.remove('bg-green-500');
                     }
                 });// If no match is found, highlight the home tab
-                if (!isMatchFound) {
-                    document.getElementById(homeTabId).classList.add('bg-green-500');
-                } else {
-                    document.getElementById(homeTabId).classList.remove('bg-green-500');
-                }
+
 
 
 
 
             };
+
+
+            function initSidebar() {
+                const sidebar = document.getElementById("mstleft");
+                const content = document.getElementById("content");
+                const icon = document.getElementById("menu-icon");
+                const savedState = localStorage.getItem("isSidebarOpen");
+
+                if (savedState === "true") {
+                    sidebar.classList.remove("-translate-x-64");
+                    sidebar.classList.add("translate-x-0");
+                    content.classList.add("ml-64");
+                    icon.classList.remove("pi-bars");
+                    icon.classList.add("pi-times");
+                } else {
+                    sidebar.classList.add("-translate-x-64");
+                    sidebar.classList.remove("translate-x-0");
+                    content.classList.remove("ml-64");
+                    icon.classList.remove("pi-times");
+                    icon.classList.add("pi-bars");
+                }
+            }
+
+            function toggleSidebar() {
+                const sidebar = document.getElementById("mstleft");
+                const content = document.getElementById("content");
+                const icon = document.getElementById("menu-icon");
+                const isSidebarOpen = sidebar.classList.contains("-translate-x-64");
+
+                if (isSidebarOpen) {
+                    sidebar.classList.remove("-translate-x-64");
+                    sidebar.classList.add("translate-x-0");
+                    content.classList.add("ml-64");
+                    icon.classList.remove("pi-bars");
+                    icon.classList.add("pi-times");
+                    localStorage.setItem("isSidebarOpen", "true");
+                } else {
+                    sidebar.classList.add("-translate-x-64");
+                    sidebar.classList.remove("translate-x-0");
+                    content.classList.remove("ml-64");
+                    icon.classList.remove("pi-times");
+                    icon.classList.add("pi-bars");
+                    localStorage.setItem("isSidebarOpen", "false");
+                }
+            }
+
+            // Initialize sidebar state on page load
+            window.addEventListener("DOMContentLoaded", initSidebar);
         </script>
+
+        <script src="#{utility.APP_PATH}resources/js/prism.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.12.0/dist/cdn.min.js"></script>
 
     </h:body>

@@ -5,11 +5,13 @@
 package cdi.notes;
 
 import api.UserApi;
+import auth.KeepRecord;
 import com.techsavvy.mindsmeet.entity.Notes;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 import java.util.Collection;
+import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
 /**
@@ -24,12 +26,14 @@ public class ViewNotesBean implements Serializable {
      * Creates a new instance of ViewNotesBean
      */
    
+    @Inject KeepRecord keepRecord;
     
     private Collection<Notes> notes;
     private UserApi userApi;
 
     public ViewNotesBean() {
         // Initialize UserApi
+//        userApi = new UserApi(keepRecord.getToken()); // Ensure proper dependency injection if applicable
         userApi = new UserApi(); // Ensure proper dependency injection if applicable
 
         // Load notes from UserApi

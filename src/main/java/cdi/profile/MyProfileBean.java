@@ -26,6 +26,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.json.Json;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
@@ -38,7 +39,9 @@ import utils.Utils;
 @Named(value = "myProfile")
 @SessionScoped
 public class MyProfileBean implements Serializable {
-    
+    @Inject
+    KeepRecord keepRecord;
+
     private Users user;
     
     private UserApi api = new UserApi();
@@ -59,8 +62,8 @@ public class MyProfileBean implements Serializable {
     }
 
     public Users getUser() {
-        if(KeepRecord.getUsername() != null){
-            user = ubl.getUserByEmail(KeepRecord.getUsername());
+        if(keepRecord.getUsername() != null){
+            user = ubl.getUserByEmail(keepRecord.getUsername());
             System.out.println(user.getFaqAnswersCollection().toString());
         }else{
             try {
@@ -85,7 +88,7 @@ public class MyProfileBean implements Serializable {
     }
 
     public Collection<Notes> getNotes() {
-        notes =  ubl.getNotesForUsers(KeepRecord.getUsername());
+        notes =  ubl.getNotesForUsers(keepRecord.getUsername());
         return notes;
     }
 
@@ -94,7 +97,7 @@ public class MyProfileBean implements Serializable {
     }
 
     public Collection<FaqMst> getFaqs() {
-        faqs = fbl.getFaqsForUsers(KeepRecord.getUsername());
+        faqs = fbl.getFaqsForUsers(keepRecord.getUsername());
         return faqs;
     }
 
@@ -131,7 +134,7 @@ public class MyProfileBean implements Serializable {
     }
 
     public Collection<PostFeedMst> getPosts() {
-        posts = ubl.getUserByEmail(KeepRecord.getUsername()).getPostFeedMstCollection();
+        posts = ubl.getUserByEmail(keepRecord.getUsername()).getPostFeedMstCollection();
         return posts;
     }
 
@@ -156,7 +159,7 @@ public class MyProfileBean implements Serializable {
     }
 
     public Collection<CommunityMst> getCommunities() {
-        communities = cbl.getMyCommunities(KeepRecord.getUsername());
+        communities = cbl.getMyCommunities(keepRecord.getUsername());
         return communities;
     }
 

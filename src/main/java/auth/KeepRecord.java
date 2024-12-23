@@ -18,64 +18,66 @@ import javax.security.enterprise.identitystore.CredentialValidationResult;
  * @author root
  */
 
+@SessionScoped
+@Named
 public class KeepRecord implements Serializable {
 
-    private static CredentialValidationResult result;
-    private static CallerPrincipal principal;
-    private static Set<String> roles;
-    private static String token;
-    private static String username;
-    private static String password;
+    private  CredentialValidationResult result;
+    private  CallerPrincipal principal;
+    private  Set<String> roles;
+    private  String token;
+    private  String username;
+    private  String password;
 
-    public static String getUsername() {
+    public  String getUsername() {
         return username;
     }
 
-    public static void setUsername(String username) {
-        KeepRecord.username = username;
+    public  void setUsername(String username) {
+        this.username = username;
     }
 
-    public static String getPassword() {
+    public  String getPassword() {
         return password;
     }
 
-    public static void setPassword(String password) {
-        KeepRecord.password = password;
+    public  void setPassword(String password) {
+        this.password = password;
     }
 
-    public static CredentialValidationResult getResult() {
+    public  CredentialValidationResult getResult() {
         return result;
     }
 
-    public static void setResult(CredentialValidationResult result) {
-        KeepRecord.result = result;
+    public  void setResult(CredentialValidationResult result) {
+        this.result = result;
     }
 
-    public static CallerPrincipal getPrincipal() {
+    public  CallerPrincipal getPrincipal() {
         return principal;
     }
 
-    public static void setPrincipal(CallerPrincipal principal) {
-        KeepRecord.principal = principal;
+    public  void setPrincipal(CallerPrincipal principal) {
+        this.principal = principal;
     }
 
-    public static Set<String> getRoles() {
+    public  Set<String> getRoles() {
         return roles;
     }
 
-    public static void setRoles(Set<String> roles) {
-        KeepRecord.roles = roles;
+    public  void setRoles(Set<String> roles) {
+        this.roles = roles;
     }
 
-    public static String getToken() {
+    public  String getToken() {
         return token;
     }
 
-    public static void setToken(String token) {
-        KeepRecord.token = token;
+    public  void setToken(String token) {
+        this.token = token;
     }
 
-    public static void reset() {
+    public  void reset() {
 
         principal = null;
         token = null;

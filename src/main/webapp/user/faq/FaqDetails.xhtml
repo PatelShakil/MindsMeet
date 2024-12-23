@@ -3,99 +3,89 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:pe="http://primefaces.org/ui/extensions"
-      xmlns:p="http://primefaces.org/ui">
-
-  
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
 
     <body>
         <ui:composition template="./../Master.xhtml">
             <ui:define name="content">
-                <h:form>
-                    <!-- Main Content Container -->
-                    <div class="container mx-auto p-6 space-y-6 max-w-screen-lg">
+                <!-- Main Content Container -->
+                <div class="container mx-auto p-6 space-y-6 max-w-screen-lg">
 
-                        <!-- FAQ Details Section -->
-                        <div class="bg-white shadow-md rounded-lg p-6">
-                            <h1 class="text-2xl font-bold mb-4 text-gray-800">
-                                #{faqDetailBean.faq.que}
-                            </h1>
-                            <p class="text-gray-600 mb-4">
-                                #{faqDetailBean.faq.description}
-                            </p>
-                            <p class="text-gray-500 text-sm mb-2">
-                                Uploaded by: <b>#{faqDetailBean.faq.userId.username}</b>
-                            </p>
+                    <!-- FAQ Details Section -->
+                    <div class="bg-white shadow-md rounded-lg p-6">
+                        <h1 class="text-2xl font-bold mb-4 text-gray-800">
+                            #{faqDetailBean.faq.que}
+                        </h1>
+                        <p class="text-gray-600 mb-4">
+                            #{faqDetailBean.faq.description}
+                        </p>
+                        <p class="text-gray-500 text-sm mb-2">
+                            Uploaded by: <b>#{faqDetailBean.faq.userId.username}</b>
+                        </p>
 
-                            <!-- Attached Code -->
-                            <div class="mb-4 border rounded-lg  shadow p-4 bg-gray-50">
-                                <label class="block text-gray-800 font-bold mb-2">Attached Code</label>
-                                <hr />
-                                <pre class="rounded-lg p-4 overflow-x-auto language-java"><code >#{faqDetailBean.faq.code}</code></pre>
-                            </div>
-
-                            <!-- Add Comment Button -->
-                            <div class="flex justify-end">
-                                <p:commandButton 
-                                    value="Add Comment" 
-                                    action="#{faqDetailBean.openDialog()}"
-                                    oncomplete="PF('commentDialog').show();" 
-                                    class="bg-green-500 text-white px-4 py-2 rounded-md shadow hover:bg-green-600" />
-                            </div>
-                        </div>
-
-                        <!-- Comments List Section -->
-                        <div class="bg-white shadow-md rounded-lg p-6 space-y-4">
-                            <h3 class="text-2xl font-bold">Replies</h3>
+                        <!-- Attached Code -->
+                        <div class="mb-4 border rounded-lg shadow p-4 bg-gray-50">
+                            <label class="block text-gray-800 font-bold mb-2">Attached Code</label>
                             <hr />
-                            <ui:repeat value="#{faqDetailBean.faq.faqAnswersCollection}" var="ans">
-                                <div class="border rounded-lg p-4 bg-gray-50 space-y-4">
-                                    <!-- User Profile and Name -->
-                                    <div class="flex items-center gap-3">
-                                        <img 
-                                            src="${utility.IMAGES_PATH}${ans.userId.profile}" 
-                                            alt="User Profile" 
-                                            class="h-12 w-12 rounded-full border border-gray-300" />
-                                        <h6 class="text-gray-800 font-semibold">
-                                            #{ans.userId.username}
-                                        </h6>
-                                    </div>
-
-                                    <!-- Answer Text -->
-                                    <p class="text-gray-700">
-                                        #{ans.answer}
-                                    </p>
-
-                                    <!-- Code Snippet -->
-                                    <pre class="language-java rounded-lg p-4 overflow-x-auto"><code class="">#{ans.code}</code>
-                                    </pre>
-                                </div>
-                            </ui:repeat>
+                            <pre class="rounded-lg p-4 overflow-x-auto language-java"><code>#{faqDetailBean.faq.code}</code></pre>
                         </div>
 
-                        <!-- Add Comment Dialog -->
-                        <p:dialog id="commentDialog" responsive="true" position="center" header="Add Comment" widgetVar="commentDialog" modal="true">
-                            <div class="space-y-4 flex flex-col">
-                                <h:outputLabel value="Your Comment:" />
-                                <p:inputTextarea value="#{faqDetailBean.answer}" rows="5" cols="50" required="true" />
-
-                                <h:outputLabel value="Your Code (optional):" />
-                                <pe:codeMirror 
-                                    id="codeMirrorInput" 
-                                    mode="javascript" 
-                                    theme="blackboard" 
-                                    value="#{faqDetailBean.code}" />
-
-                                <p:commandButton 
-                                    value="Submit" 
+                        <!-- Inline Comment Form -->
+                        <h:form class="flex flex-col items-center">
+                            <div id="add-comment" class="my-4">
+                                <p:inputTextarea 
+                                    id="comment" 
+                                    value="#{faqDetailBean.answer}" 
+                                    rows="1" 
+                                    cols="50" 
+                                    placeholder="Enter your comment..." 
+                                    required="true"
+                                    class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                                <p:inputTextarea 
+                                    id="code" 
+                                    value="#{faqDetailBean.code}" 
+                                    rows="3"
+                                    cols="50" 
+                                    placeholder="Enter your Code..." 
+                                    style="font-family: monospace"
+                                    class="w-full my-1 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                                <h:commandButton 
+                                    value="Post Comment" 
                                     action="#{faqDetailBean.submitComment()}" 
-                                    oncomplete="PF('commentDialog').hide();window.location.reload();" 
-                                    class="bg-blue-500 text-white px-4 py-2 rounded-md shadow hover:bg-blue-600" />
+                                    class="bg-blue-500 text-white px-4 py-2 mt-2 rounded-md shadow hover:bg-blue-600" />
                             </div>
-                        </p:dialog>
+                        </h:form>
                     </div>
 
-                </h:form>
+                    <!-- Comments List Section -->
+                    <div id="commentList" class="bg-white shadow-md rounded-lg p-6 space-y-4">
+                        <h3 class="text-2xl font-bold">Replies</h3>
+                        <hr />
+                        <ui:repeat value="#{faqDetailBean.faq.faqAnswersCollection}" var="ans">
+                            <div class="border rounded-lg p-4 bg-gray-50 space-y-4">
+                                <!-- User Profile and Name -->
+                                <div class="flex items-center gap-3">
+                                    <img 
+                                        src="${utility.IMAGES_PATH}${ans.userId.profile}" 
+                                        alt="User Profile" 
+                                        class="h-12 w-12 rounded-full border border-gray-300" />
+                                    <h6 class="text-gray-800 font-semibold">
+                                        #{ans.userId.username}
+                                    </h6>
+                                </div>
+
+                                <!-- Answer Text -->
+                                <p class="text-gray-700">
+                                    #{ans.answer}
+                                </p>
+
+                                <!-- Code Snippet -->
+                                <pre class="language-java rounded-lg p-4 overflow-x-auto"><code>#{ans.code}</code></pre>
+                            </div>
+                        </ui:repeat>
+                    </div>
+                </div>
             </ui:define>
         </ui:composition>
     </body>

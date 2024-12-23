@@ -22,6 +22,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.file.UploadedFile;
@@ -34,6 +35,8 @@ import utils.Utils;
 @Named(value = "uploadNotesBean")
 @ViewScoped
 public class UploadNotesBean implements Serializable{
+    @Inject
+    KeepRecord keepRecord;
 
     private String title;
     private String description;
@@ -49,6 +52,7 @@ public class UploadNotesBean implements Serializable{
     }
     
     private final UserApi api = new UserApi();
+//    private final UserApi api = new UserApi(keepRecord.getToken());
 
     public Collection<NotesText> getTextList() {
         return textList;
@@ -154,7 +158,7 @@ public class UploadNotesBean implements Serializable{
             note.setIsPublic(isPublic);
 
             Users user = new Users();
-            user.setEmail(KeepRecord.getUsername());
+            user.setEmail(keepRecord.getUsername());
             note.setUserId(user);
 
             Response res = api.uploadNote(note, Response.class);

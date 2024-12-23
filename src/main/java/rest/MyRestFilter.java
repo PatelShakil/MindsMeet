@@ -1,57 +1,60 @@
 package rest;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-
-/**
- *
- * @author root
- */
-import auth.KeepRecord;
-import java.io.IOException;
-import javax.servlet.annotation.WebFilter;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
-import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.Cookie;
 import javax.ws.rs.ext.Provider;
+import java.io.IOException;
+import javax.inject.Inject;
+import auth.KeepRecord;
 
-
-/**
- * This RequestFilter performs a form based authentication. The filter can be
- * used with a javax.ws.rs.client.Client.
- * 
- * Author : Kamlendu Pandey
- */
-//@Secured
-
-//@WebFilter(filterName = "AuthenticationFilter", urlPatterns = { "/api/*" })
 @Provider
-@PreMatching
 public class MyRestFilter implements ClientRequestFilter {
-    public static String mytoken;
-    //@Inject TokenProvider verifier;
-    
-    public MyRestFilter() {      
-       // mytoken = token;
-     }
- 
-    @Override
-     public void filter(ClientRequestContext requestContext) throws IOException {
-      //  throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-      
-             System.out.println(" In form Auth Client Filter "+ mytoken);
-      
-       
-            requestContext.getHeaders().add(HttpHeaders.AUTHORIZATION,"Bearer "+ KeepRecord.getToken());
-      
-            System.out.println(" After cookie header Auth Client Filter "+ mytoken);
-   
-    }
+    String token;
+//
+//    public MyRestFilter(String token) {
+//        this.token = token;
+//    }
+//    
+//    
 
-    
+    @Inject
+    KeepRecord keepRecord;  // This will handle token retrieval if needed
+
+    public static String mytoken;
+
+    @Override
+    public void filter(ClientRequestContext requestContext) throws IOException {
+        // Log to ensure the filter is being invoked
+        System.out.println("In MyRestFilter: Checking if token exists.");
+
+        // Retrieve the token from KeepRecord or cookies (if KeepRecord is used)
+//            token = keepRecord.getToken();
+
+        // If KeepRecord is used to manage token, we retrieve it from there
+        if (keepRecord != null) {
+            System.out.println("Token from KeepRecord: " + token);
+        }
+
+        // If KeepRecord is not available, try getting the token from cookies
+        System.out.println(requestContext.getCookies());
+        if (token == null) {
+            Cookie authCookie = requestContext.getCookies().get("token");  // Use the cookie name that stores the token
+            if (authCookie != null) {
+                token = authCookie.getValue();
+                System.out.println("Token from Cookie: " + token);
+            } else {
+                System.out.println("No token found in cookies.");
+            }
+        }
+
+        // If a token is found, add it as a Bearer token to the Authorization header
+        if (token != null && !token.isEmpty()) {
+            requestContext.getHeaders().add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
+            System.out.println("Token added to request headers.");
+        } else {
+            System.out.println("No valid token to add to request.");
+        }
+    }
 }

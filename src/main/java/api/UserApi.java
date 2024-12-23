@@ -7,6 +7,7 @@ package api;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
+import rest.MyRestFilter;
 
 /**
  * Jersey REST client generated for REST resource:UserResource [v1]<br>
@@ -25,10 +26,21 @@ public class UserApi {
     private WebTarget webTarget;
     private Client client;
     private static final String BASE_URI = "http://localhost:8080/MindsMeet/api";
+    
+
+
+//    public UserApi(String token) {
+//        client = javax.ws.rs.client.ClientBuilder.newClient();
+//        client.register (new MyRestFilter(token));  // This automatically uses the @Inject mechanism if needed
+//        webTarget = client.target(BASE_URI).path("v1");
+//
+//    }
 
     public UserApi() {
         client = javax.ws.rs.client.ClientBuilder.newClient();
+        client.register (new MyRestFilter());  // This automatically uses the @Inject mechanism if needed
         webTarget = client.target(BASE_URI).path("v1");
+
     }
 
     public <T> T doSignup(Object requestEntity, Class<T> responseType) throws ClientErrorException {

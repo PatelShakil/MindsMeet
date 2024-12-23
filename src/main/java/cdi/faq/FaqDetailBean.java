@@ -22,6 +22,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
 /**
@@ -31,7 +32,9 @@ import javax.ws.rs.core.Response;
 @Named(value = "faqDetailBean")
 @ViewScoped
 public class FaqDetailBean implements Serializable {
-    
+    @Inject
+    KeepRecord keepRecord;
+
     @EJB FaqBeanLocal fbl;
     
     private FaqApi api = new FaqApi();
@@ -80,26 +83,23 @@ public class FaqDetailBean implements Serializable {
      * Creates a new instance of FaqDetailBean
      */
     public FaqDetailBean() {
+        
+        
+    }
+
+    public FaqMst getFaq() {
         faqId = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("faqId");
-        if(faqId != null){
+        if (faqId != null && faqId != "") {
             Response res = api.getFaqById(Response.class, faqId);
             faq = res.readEntity(FaqMst.class);
-            
-        }else{
+            faq.setFaqAnswersCollection(fbl.getFaqAnswers(Integer.valueOf(faqId)));
+
+        } else {
             try {
                 FacesContext.getCurrentInstance().getExternalContext().redirect("ViewFaqs.jsf");
             } catch (IOException ex) {
                 Logger.getLogger(FaqDetailBean.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
-        
-    }
-
-    public FaqMst getFaq() {
-        if (faqId != null) {
-            Response res = api.getFaqById(Response.class, faqId);
-            faq = res.readEntity(FaqMst.class);
-            faq.setFaqAnswersCollection(fbl.getFaqAnswers(Integer.valueOf(faqId)));
         }
         return faq;
     }
@@ -125,7 +125,7 @@ public class FaqDetailBean implements Serializable {
         f.setId(this.faq.getId());
         ans.insertFaqId(faq);
         Users userId = new Users();
-        userId.setEmail(KeepRecord.getUsername());
+        userId.setEmail(keepRecord.getUsername());
         ans.setUserId(userId);
         
         try{        

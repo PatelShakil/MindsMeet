@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
 
 /**
  *
@@ -25,6 +26,9 @@ import javax.faces.view.ViewScoped;
 public class ChatBean implements Serializable {
     
     @EJB UserBeanLocal ubl;
+    @Inject
+    KeepRecord keepRecord;
+
     
     private Collection<Users> users ;
     
@@ -83,7 +87,7 @@ public class ChatBean implements Serializable {
     }
 
     public Users getSender() {
-        sender = ubl.getUserByEmail(KeepRecord.getUsername());
+        sender = ubl.getUserByEmail(keepRecord.getUsername());
         return sender;
     }
 

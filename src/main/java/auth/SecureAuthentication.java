@@ -10,6 +10,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import java.io.IOException;
 import javax.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanism;
 import java.io.Serializable;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.enterprise.context.RequestScoped;
@@ -49,20 +50,46 @@ public class SecureAuthentication implements HttpAuthenticationMechanism, Serial
     TokenProvider tokenProvider;
     @Inject
     AuthBean lbean;
-
+    
+    @Inject KeepRecord keepRecord;
+    
     @Override
     public AuthenticationStatus validateRequest(HttpServletRequest request, HttpServletResponse response, HttpMessageContext ctx) throws AuthenticationException {
+        if (request.getRequestURI().contains("api")) {
+            // For API requests, skip token validation and proceed
+//            ctx.notifyContainerAboutLogin("patelsakib95@gmail.com",Set.of("User"));
+            return ctx.doNothing();
+        }
+        
         try {
+            
+//            if(request.getSession().isNew())
+//            {
+//                keepRecord.reset();
+//                String loginPage = "/auth/login.jsf"; // Ensure the path is correct
+//                Logger.getLogger(SecureAuthentication.class.getName()).log(Level.INFO, "Forwarding to login page: {0}", loginPage);
+//
+//                request.getRequestDispatcher(loginPage).forward(request, response);
+//                
+//            }
+
+            System.out.println("Session Id : " + request.getSession().getId());
+            
+            
+                       
+            
             String token = extractToken(ctx);
-            System.out.println("Token: " + KeepRecord.getToken());
+            System.out.println("Token: " + keepRecord.getToken());
 
             // Admin access validation
-            if (request.getRequestURI().contains("admin") && (KeepRecord.getToken() == null || !KeepRecord.getRoles().contains("Admin"))) {
+            if (request.getRequestURI().contains("admin") && (keepRecord.getToken() == null || !keepRecord.getRoles().contains("Admin"))) {
                 return sendUnauthorized(ctx, "Unauthorized access to admin section.");
             }
+            
+            
 
             // User access validation
-            if (request.getRequestURI().contains("user") && KeepRecord.getToken() == null) {
+            if (request.getRequestURI().contains("user") && keepRecord.getToken() == null) {
                 forwardToLogin(request, response);
                 return ctx.doNothing();
             }
@@ -73,12 +100,12 @@ public class SecureAuthentication implements HttpAuthenticationMechanism, Serial
             }
 
             // Credential-based authentication
-            if (KeepRecord.getToken() == null && lbean.getEmail() != null) {
+            if (keepRecord.getToken() == null && lbean.getEmail() != null) {
                 return processCredentials(ctx);
             }
 
             // Revalidate existing credentials
-            if (KeepRecord.getToken() != null) {
+            if (keepRecord.getToken() != null) {
                 return revalidateCredentials(ctx);
             }
 
@@ -91,6 +118,9 @@ public class SecureAuthentication implements HttpAuthenticationMechanism, Serial
         if (ctx.isProtected()) {
             return ctx.responseUnauthorized();
         }
+        
+        
+        
 
         return ctx.doNothing();
     }
@@ -100,10 +130,10 @@ public class SecureAuthentication implements HttpAuthenticationMechanism, Serial
             Credential credential = new UsernamePasswordCredential(lbean.getEmail(), new Password(lbean.getPassword()));
             result = handler.validate(credential);
             if (result.getStatus() == Status.VALID) {
-                KeepRecord.setUsername(lbean.getEmail());
-                KeepRecord.setPassword(lbean.getPassword());
-                KeepRecord.setPrincipal(result.getCallerPrincipal());
-                KeepRecord.setRoles(result.getCallerGroups());
+                keepRecord.setUsername(lbean.getEmail());
+                keepRecord.setPassword(lbean.getPassword());
+                keepRecord.setPrincipal(result.getCallerPrincipal());
+                keepRecord.setRoles(result.getCallerGroups());
                 lbean.setRoles(result.getCallerGroups());
                 return createToken(result, ctx);
             } else {
@@ -118,7 +148,7 @@ public class SecureAuthentication implements HttpAuthenticationMechanism, Serial
 
     private AuthenticationStatus revalidateCredentials(HttpMessageContext ctx) {
         try {
-            Credential credential = new UsernamePasswordCredential(KeepRecord.getUsername(), new Password(KeepRecord.getPassword()));
+            Credential credential = new UsernamePasswordCredential(keepRecord.getUsername(), new Password(keepRecord.getPassword()));
             result = handler.validate(credential);
             if (result.getStatus() == Status.VALID) {
                 return createToken(result, ctx);
@@ -146,7 +176,6 @@ public class SecureAuthentication implements HttpAuthenticationMechanism, Serial
             }
         }
     }
-
 
     private AuthenticationStatus sendUnauthorized(HttpMessageContext ctx, String message) {
         Logger.getLogger(SecureAuthentication.class.getName()).log(Level.WARNING, message);
@@ -182,7 +211,7 @@ public class SecureAuthentication implements HttpAuthenticationMechanism, Serial
             // if (true) {
             String jwt = tokenProvider.createToken(result.getCallerPrincipal().getName(), result.getCallerGroups(), false);
             //context.getRequest().getSession().setAttribute("token", jwt);
-            KeepRecord.setToken(jwt);
+            keepRecord.setToken(jwt);
             context.getResponse().addHeader(AUTHORIZATION_HEADER, BEARER + jwt);
 //            System.out.println("Token Value" + jwt);
 

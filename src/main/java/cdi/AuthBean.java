@@ -49,6 +49,7 @@ public class AuthBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @Inject KeepRecord keepRecord;
     //security
     @Inject
     SecurityContext ctx;
@@ -66,7 +67,12 @@ public class AuthBean implements Serializable {
     private String username;
     private String isrememberme;
 
-    private UserApi api = new UserApi();
+    private UserApi api;
+    
+    
+    public AuthBean(){
+    
+    }
 
     private UploadedFile uploadedFile;
 
@@ -289,7 +295,6 @@ public String onRegister() {
 }
 
 
-//    }
 public String onLogin() {
         if (email == null || email.isEmpty() || password == null || password.isEmpty()) {
             FacesContext.getCurrentInstance().addMessage(null,
@@ -360,7 +365,7 @@ public String onLogin() {
             HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
             request.getSession().invalidate();
             request.logout();
-            KeepRecord.reset();
+            keepRecord.reset();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -378,6 +383,7 @@ public String onLogin() {
 
         // Set the max age of the cookie (30 days in seconds)
         cookie.setMaxAge(maxAgeInDays * 24 * 60 * 60);
+
 
         // Set the path of the cookie to be available for the entire application
         cookie.setPath("/");

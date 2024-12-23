@@ -15,6 +15,7 @@ import javax.inject.Named;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 
@@ -27,6 +28,9 @@ import javax.ws.rs.core.Response;
 public class FaqBean implements Serializable {
 
     private FaqApi api;
+    @Inject
+    KeepRecord keepRecord;
+
     
     private Collection<FaqMst> faqs;
 
@@ -47,7 +51,7 @@ public class FaqBean implements Serializable {
         faq.setQue(question);
         faq.setDescription(description);
         Users userId = new Users();
-        userId.setEmail(KeepRecord.getUsername());
+        userId.setEmail(keepRecord.getUsername());
         faq.setUserId(userId);
         try {
             Response res = api.uploadFaq(faq, Response.class);

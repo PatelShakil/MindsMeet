@@ -21,6 +21,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 
@@ -31,6 +32,8 @@ import javax.ws.rs.core.Response;
 @Named(value = "postDetail")
 @SessionScoped
 public class PostDetailBean implements Serializable {
+    @Inject
+    KeepRecord keepRecord;
 
     private PostApi api = new PostApi();
 
@@ -115,7 +118,7 @@ public class PostDetailBean implements Serializable {
 
     public String doLike() {
 
-        System.out.println("LIKED");        pbl.likeOnPost(pfm.getId(), KeepRecord.getUsername());
+        System.out.println("LIKED");        pbl.likeOnPost(pfm.getId(), keepRecord.getUsername());
 //        getPfm();
         return ""; // No navigation, stay on the same page
     }
@@ -124,7 +127,7 @@ public class PostDetailBean implements Serializable {
         if(!comment.isEmpty()){
             PostComments pc = new PostComments();
             Users user =new  Users();
-            user.setEmail(KeepRecord.getUsername());
+            user.setEmail(keepRecord.getUsername());
             pc.setUserId(user);
             pc.setPostId(pfm);
             pc.setText(comment);
@@ -161,7 +164,7 @@ public class PostDetailBean implements Serializable {
     
     public boolean isPostLiked() {
         return pbl.getPostLikes(pfm.getId()).stream()
-                .anyMatch(like -> like.getUserId().getEmail().equals(KeepRecord.getUsername()));
+                .anyMatch(like -> like.getUserId().getEmail().equals(keepRecord.getUsername()));
     }
     
         public int getLikesCount() {

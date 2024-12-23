@@ -58,11 +58,14 @@
                                 <h:graphicImage class="h-12 w-12 rounded-full border border-4 border-white dark:border-white-800 my-2"
                                                 value="#{utility.user.profile}?#{System.currentTimeMillis()}" 
                                                 alt="#{utility.user.profile}" />
-                                <h2 class="text-lg ml-2 font-bold py-4 border-gray-700">#{utility.user.username}</h2>
+                                <h2 class="text-lg ml-2 font-bold py-4 border-gray-700">#{utility.user.name}</h2>
 
                             </div>
                         </a>
                         <ul class="space-y-2 mt-4 px-2">
+                            <li id="admin" class="#{utility.role == 'Admin' ? 'block' : 'hidden'} hover:bg-green-500 bg-yellow-400 rounded-tr-full rounded-br-full px-3 py-2 transition-colors duration-200">
+                                <a href="#{utility.APP_PATH}admin/index.jsf" class="block">Admin Panel</a>
+                            </li>
                             <li id="home-tab" class="hover:bg-green-500 rounded-tr-full rounded-br-full px-3 py-2 transition-colors duration-200">
                                 <a href="#{utility.APP_PATH}user/index.jsf" class="block">Home</a>
                             </li>
@@ -81,6 +84,10 @@
                             <li id="chat-tab" class="hover:bg-green-500 rounded-tr-full rounded-br-full px-3 py-2 transition-colors duration-200">
                                 <a href="#{utility.APP_PATH}user/chat/index.jsf" class="block">Chat</a>
                             </li>
+                            
+                            
+                            
+                            
 
                         </ul>
                     </div>

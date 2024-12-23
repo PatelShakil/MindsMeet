@@ -25,6 +25,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 
@@ -35,9 +36,12 @@ import javax.ws.rs.core.Response;
 @Named(value = "comDetails")
 @SessionScoped
 public class CommunityDetailsBean implements Serializable {
+    @Inject
+    KeepRecord keepRecord;
 
     private CommunityMst com;
 
+//    private UserApi api = new UserApi(keepRecord.getToken());
     private UserApi api = new UserApi();
     
     private Users sender ;
@@ -189,7 +193,7 @@ public class CommunityDetailsBean implements Serializable {
     }
 
     public Boolean isOwner() {
-        return (KeepRecord.getUsername() == null ? com.getUserId().getEmail() == null : KeepRecord.getUsername().equals(com.getUserId().getEmail()));
+        return (keepRecord.getUsername() == null ? com.getUserId().getEmail() == null : keepRecord.getUsername().equals(com.getUserId().getEmail()));
     }
 
     public UserApi getApi() {
@@ -201,7 +205,7 @@ public class CommunityDetailsBean implements Serializable {
     }
 
     public Users getSender() {
-        sender = ubl.getUserByEmail(KeepRecord.getUsername());
+        sender = ubl.getUserByEmail(keepRecord.getUsername());
         return sender;
     }
 

@@ -1,7 +1,10 @@
 package com.techsavvy.mindsmeet;
 
+import java.util.HashSet;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
+import rest.MyRestFilter;
+import java.util.Set;
 
 /**
  * Configures Jakarta RESTful Web Services for the application.
@@ -9,4 +12,5 @@ import javax.ws.rs.core.Application;
  */
 @ApplicationPath("api")
 public class JakartaRestConfiguration extends Application {
+
 }

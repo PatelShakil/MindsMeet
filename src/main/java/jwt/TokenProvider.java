@@ -3,6 +3,7 @@ package jwt;
 
 //import com.sun.xml.ws.security.impl.policy.Claims;
 //import static com.sun.xml.ws.security.impl.policy.Constants.SignatureAlgorithm;
+import auth.KeepRecord;
 import static jwt.Constants.REMEMBERME_VALIDITY_SECONDS;
 import io.jsonwebtoken.*;
 import java.io.Serializable;
@@ -27,6 +28,7 @@ import javax.inject.Named;
 //@SessionScoped
 @Named
 public class TokenProvider implements Serializable {
+    
 
     private static final Logger LOGGER = Logger.getLogger(TokenProvider.class.getName());
 
@@ -144,7 +146,6 @@ public class TokenProvider implements Serializable {
         try {
 //            System.out.println("TokenProvider - TokenProvider - validate token " + authToken);
             JWTCredential cred = getCredential(authToken);
-            System.out.print(cred);
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(authToken);
             
           //Jwts.parser().setSigningKey(mypublicKey).parseClaimsJws(authToken);

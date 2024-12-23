@@ -5,11 +5,11 @@
         <param-value>Development</param-value>
     </context-param>
 <!--    <filter>
-        <filter-name>REST Filter</filter-name>
+        <filter-name>RESTFilter</filter-name>
         <filter-class>rest.MyRestFilter</filter-class>
     </filter>
     <filter-mapping>
-        <filter-name>REST Filter</filter-name>
+        <filter-name>RESTFilter</filter-name>
         <url-pattern>/api/*</url-pattern>
     </filter-mapping>-->
     <servlet>

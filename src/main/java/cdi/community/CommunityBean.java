@@ -20,6 +20,7 @@ import java.util.Collection;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.file.UploadedFile;
 import utils.Utils;
@@ -31,6 +32,8 @@ import utils.Utils;
 @Named(value = "community")
 @SessionScoped
 public class CommunityBean implements Serializable {
+    @Inject
+    KeepRecord keepRecord;
 
     @EJB
     CommunityBeanLocal cbl;
@@ -62,7 +65,7 @@ public class CommunityBean implements Serializable {
     }
 
     public Collection<CommunityMst> getJoinedCommunities() {
-        joinedCommunities = cbl.getJoinedCommunities(KeepRecord.getUsername());
+        joinedCommunities = cbl.getJoinedCommunities(keepRecord.getUsername());
         return joinedCommunities;
     }
 
@@ -71,7 +74,7 @@ public class CommunityBean implements Serializable {
     }
 
     public Collection<CommunityMst> getMyCommunities() {
-        myCommunities = cbl.getMyCommunities(KeepRecord.getUsername());
+        myCommunities = cbl.getMyCommunities(keepRecord.getUsername());
         return myCommunities;
     }
 
@@ -127,7 +130,7 @@ public class CommunityBean implements Serializable {
             cm.setProfile(photo);
             cm.setDescription(description);
             Users user = new Users();
-            user.setEmail(KeepRecord.getUsername());
+            user.setEmail(keepRecord.getUsername());
             cm.setUserId(user);
             cbl.createCommunity(cm);
             name= "";
@@ -189,7 +192,7 @@ public class CommunityBean implements Serializable {
     }
     
     public String joinCommunity(Integer cId){
-        Users sender = ubl.getUserByEmail(KeepRecord.getUsername());
+        Users sender = ubl.getUserByEmail(keepRecord.getUsername());
         cbl.joinCommunity(cId, sender.getId());
         return "index.jsf?faces-redirect=true";
     }

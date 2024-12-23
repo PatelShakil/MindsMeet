@@ -21,14 +21,11 @@
                              [&amp;::-webkit-scrollbar-thumb]:bg-gray-400
                              dark:[&amp;::-webkit-scrollbar-track]:bg-gray-300
                              dark:[&amp;::-webkit-scrollbar-thumb]:bg-gray-400">
-                            <!-- Search Box -->
-                            <p:inputText id="searchBox" value="#{chat.searchText}" placeholder="Search..." class="p-2 m-2 border rounded">
-                                <p:ajax event="keyup" process="@this" listener="#{chat.onSearch}" update=":usersList" />
-                            </p:inputText>
+
 
                             <!-- User List -->
                             <ui:repeat value="#{chat.users}" var="user">
-                                <div onclick="openChat(#{user.id}, '#{user.name}')"
+                                <div onclick="openChat(#{user.id}, '#{user.name}','#{user.profile}')"
                                      class="user-item flex border  border-gray-300 rounded-md p-2 m-1 bg-white hover:bg-green-100 cursor-pointer"
                                      id="user_#{user.id}">
                                     <h:graphicImage value="#{utility.IMAGES_PATH}#{user.profile}"
@@ -42,7 +39,7 @@
                         </div>
 
                         <!-- Chat Section -->
-                        <div style="background:url('https://www.toptal.com/designers/subtlepatterns/uploads/more-leaves.png');" 
+                        <div style="background:url('https://blog.1a23.com/wp-content/uploads/sites/2/2020/02/Desktop.png') no-repeat;" 
                              class="col-span-3 flex flex-col bg-white max-h-[80vh]">
                             <!-- Chat Header -->
                             <div class="flex items-center p-4 bg-gray-100 border-b shadow-md">

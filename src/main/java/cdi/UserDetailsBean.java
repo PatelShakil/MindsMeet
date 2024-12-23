@@ -5,12 +5,14 @@
 package cdi;
 
 import api.UserApi;
+import auth.KeepRecord;
 import com.techsavvy.mindsmeet.entity.Users;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 import utils.Utils;
 
@@ -21,6 +23,8 @@ import utils.Utils;
 @Named(value = "userDetailsBean")
 @SessionScoped
 public class UserDetailsBean implements Serializable {
+    
+    @Inject KeepRecord keepRecord;
     private UserApi api;
     private Users user;
     private String username;
@@ -29,6 +33,7 @@ public class UserDetailsBean implements Serializable {
      * Creates a new instance of UserDetailsBean
      */
     public UserDetailsBean() {
+//        api = new UserApi(keepRecord.getToken());
         api = new UserApi();
         getUsername();
     }
