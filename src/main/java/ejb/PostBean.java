@@ -106,7 +106,7 @@ public class PostBean implements PostBeanLocal {
 
     @Override
     public Collection<PostComments> getPostComments(Integer id) {
-        Collection<PostComments> likes = em.createQuery("select l from PostComments l where l.postId.id = :id").setParameter("id", id).getResultList();
+        Collection<PostComments> likes = em.createQuery("select l from PostComments l where l.postId.id = :id order by l.createdAt DESC").setParameter("id", id).getResultList();
         return likes;
 
     }

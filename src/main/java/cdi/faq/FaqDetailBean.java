@@ -15,6 +15,7 @@ import java.io.IOException;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -30,17 +31,19 @@ import javax.ws.rs.core.Response;
  * @author Acer
  */
 @Named(value = "faqDetailBean")
-@ViewScoped
+@SessionScoped
 public class FaqDetailBean implements Serializable {
+
     @Inject
     KeepRecord keepRecord;
 
-    @EJB FaqBeanLocal fbl;
-    
+    @EJB
+    FaqBeanLocal fbl;
+
     private FaqApi api = new FaqApi();
     private FaqMst faq;
     private String faqId;
-            
+
     private String answer;
     private String code;
     private boolean showDialog = false;
@@ -68,7 +71,6 @@ public class FaqDetailBean implements Serializable {
     public void setShowDialog(boolean showDialog) {
         this.showDialog = showDialog;
     }
-    
 
     // Other fields and logic are the same as above
     public void openDialog() {
@@ -83,23 +85,28 @@ public class FaqDetailBean implements Serializable {
      * Creates a new instance of FaqDetailBean
      */
     public FaqDetailBean() {
-        
-        
+
     }
 
     public FaqMst getFaq() {
         faqId = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("faqId");
-        if (faqId != null && faqId != "") {
-            Response res = api.getFaqById(Response.class, faqId);
-            faq = res.readEntity(FaqMst.class);
-            faq.setFaqAnswersCollection(fbl.getFaqAnswers(Integer.valueOf(faqId)));
-
-        } else {
+        if (faqId != null) {
             try {
-                FacesContext.getCurrentInstance().getExternalContext().redirect("ViewFaqs.jsf");
-            } catch (IOException ex) {
-                Logger.getLogger(FaqDetailBean.class.getName()).log(Level.SEVERE, null, ex);
+                Response res = api.getFaqById(Response.class, faqId);
+                faq = res.readEntity(FaqMst.class);
+                Collection<FaqAnswers> answers = fbl.getFaqAnswers(Integer.valueOf(faqId));
+                if (answers != null && !answers.isEmpty()) {
+                    faq.setFaqAnswersCollection(fbl.getFaqAnswers(Integer.valueOf(faqId)));
+                }
+            }catch(Exception e){
+                e.printStackTrace();
             }
+        } else {
+//            try {
+//                FacesContext.getCurrentInstance().getExternalContext().redirect("ViewFaqs.jsf");
+//            } catch (IOException ex) {
+//                Logger.getLogger(FaqDetailBean.class.getName()).log(Level.SEVERE, null, ex);
+//            }
         }
         return faq;
     }
@@ -115,8 +122,9 @@ public class FaqDetailBean implements Serializable {
     public void setFaqId(String faqId) {
         this.faqId = faqId;
     }
-    
+
     public String submitComment() {
+        System.out.println("SUBMIT CLICKED");
         FaqAnswers ans = new FaqAnswers();
         ans.setAnswer(answer);
         ans.setCode(code);
@@ -127,16 +135,19 @@ public class FaqDetailBean implements Serializable {
         Users userId = new Users();
         userId.setEmail(keepRecord.getUsername());
         ans.setUserId(userId);
-        
-        try{        
+
+        try {
 //                    Response res = api.answerFaq(ans, Response.class);
 
             Response res = fbl.answerFaq(ans);
-        getFaq();
+            answer = "";
+            code = "";
+//        getFaq();
+            System.out.println(res.toString());
 
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_ERROR, res.toString(), null));
-        }catch(Exception e){
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, res.toString(), null));
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return "FaqDetails.jsf?faqId=" + faqId;
@@ -157,7 +168,5 @@ public class FaqDetailBean implements Serializable {
     public void setCode(String code) {
         this.code = code;
     }
-    
-    
-    
+
 }

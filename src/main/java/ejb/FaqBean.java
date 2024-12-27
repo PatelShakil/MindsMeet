@@ -153,7 +153,7 @@ public class FaqBean implements FaqBeanLocal {
     @Override
     public Collection<FaqAnswers> getFaqAnswers(Integer id) {
         FaqMst faq = em.find(FaqMst.class,id);
-        Collection<FaqAnswers> ans = em.createQuery("select a from FaqAnswers a where a.faqId.id = :faq").setParameter("faq", id).getResultList();
+        Collection<FaqAnswers> ans = em.createQuery("select a from FaqAnswers a where a.faqId.id = :faq order by a.createdAt DESC").setParameter("faq", id).getResultList();
         return ans;
     }
 }

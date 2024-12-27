@@ -67,7 +67,7 @@ public class AuthBean implements Serializable {
     private String username;
     private String isrememberme;
 
-    private UserApi api;
+    private UserApi api = new UserApi();
     
     
     public AuthBean(){
@@ -243,6 +243,12 @@ public String onRegister() {
     user.setUsername(username);
     user.setPhone(phone);
     user.setProfile(getUploadedFilePath()); // Ensure this returns a valid, sanitized path
+    
+    if(user.getEmail().isEmpty() || user.getPassword().isEmpty() || user.getUsername().isEmpty() || user.getName().isEmpty()){
+// Handle failed authentication after registration
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Registration Failed", "Unable to perform registration. Please Enter all fields !!!"));
+        return "/auth/login.jsf";    }
 
     try {
         // Perform the registration API call
@@ -250,11 +256,11 @@ public String onRegister() {
         api.close();
 
         // Check if the registration was successful
-        if (res == null || res.getStatus() == 200) {
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Registration Failed", "Unable to register user. Please try again."));
-            return "/auth/register.jsf";
-        }
+//        if (res == null || res.getStatus() == 200) {
+//            FacesContext.getCurrentInstance().addMessage(null,
+//                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Registration Failed", "Unable to register user. Please try again."));
+//            return "/auth/register.jsf";
+//        }
 
         // Perform automatic login
         Credential credential = new UsernamePasswordCredential(email, new Password(password));
@@ -273,7 +279,7 @@ public String onRegister() {
             if (roles.contains("Admin")) {
                 return "/admin/index.jsf";
             } else if (roles.contains("User")) {
-                return "/user/index.jsf";
+                return "/user/index.jsf?jsf-redirect=true;";
             }
         }
 
@@ -325,11 +331,11 @@ public String onLogin() {
                 if (roles.contains("Admin")) {
                     username = "";
                     password = "";
-                    return "/admin/index.jsf";
+                    return "/admin/index.jsf?faces-redirect=true";
                 } else if (roles.contains("User")) {                  
                     username = "";
                     password = "";
-                    return "/user/index.jsf";
+                    return "/user/index.jsf?faces-redirect=true";
                 } else {
                     return "/auth/login.jsf";
                 }

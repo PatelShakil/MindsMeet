@@ -43,23 +43,15 @@
                             <p:fileUpload 
                                 listener="#{authBean.handleFileUpload}"
                                 mode="advanced"
-                                auto="true"
                                 accept=".jpg,.png,.jpeg" 
                                 dragDropSupport="true"
-                                label="Choose File"
-                                update="imagePreview"
+                                label="Choose Profile Image"
                                 class="p-fileupload w-full border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" 
                             >
                             </p:fileUpload>
                         </div>
 
-                        <!-- Image Preview -->
-                        <h:panelGroup id="imagePreview">
-                            <label class="input-label">Preview</label>  
-                            <p:graphicImage id="image" value="#{authBean.profilePath}?#{System.currentTimeMillis()}" 
-                                            alt="Profile Preview" 
-                                            class="w-32 h-32 rounded-full border border-2 border-solid shadow-md" />
-                        </h:panelGroup>
+                     
 
                         <!-- Input Fields -->
                         <div>
@@ -89,7 +81,7 @@
 
                         <!-- Submit Button -->
                         <div>
-                            <h:commandButton value="Sign Up" action="#{authBean.onRegister}" class="w-full py-2.5 px-5 text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium text-sm text-center" />
+                            <h:commandButton value="Sign Up" action="#{authBean.onRegister}" class="w-full py-2.5 px-5 text-white bg-green-600 rounded-lg cursor-pointer hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium text-sm text-center" />
                         </div>
                     </h:form>
 
