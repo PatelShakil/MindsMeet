@@ -20,7 +20,7 @@ import org.apache.pdfbox.text.PDFTextStripper;
  * @author M.SHAKIL PATEL
  */
 public class Utils {
-    public static String APP_URL = "http://localhost:8080/MindsMeet/";
+    public static String APP_URL = "https://mindsmeet.azurewebsites.net";
     public static String STORAGE_PATH = "D:\\ICT\\JAVA\\MindsMeet\\MindsMeet\\src\\main\\webapp\\resources\\uploads\\";
     public static String STORAGE_URL = APP_URL+"resources/uploads/";
     public static String PDF_PATH = STORAGE_PATH + "pdf/";
